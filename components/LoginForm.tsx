@@ -47,9 +47,12 @@ export default function LoginForm() {
         {pending ? "Processing..." : "Login &rarr;"}
       </button>
 
-      <div className="mt-4 text-center">
-        <Link href="/" className="text-xs text-blue-400 hover:underline">
-          &larr; Back to Homepage
+      <div className="mt-8">
+        <Link
+          href="/"
+          className="inline-block px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 rounded-lg text-xs font-medium transition-colors"
+        >
+          &larr; Return to Homepage
         </Link>
       </div>
     </form>
