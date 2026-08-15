@@ -1,36 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Portfolio — Next.js
 
-## Getting Started
+A modern, full-stack personal portfolio built with the **Next.js App Router**, featuring a public showcase site and a complete **admin panel** to manage all content from a PostgreSQL database.
 
-First, run the development server:
+## ✨ Features
+
+### Public site
+- **Home** — hero section (greeting + intro) and "The Journey & Learning Phases" timeline
+- **Projects** — project cards with cover images and detail pages featuring an animated image gallery (Framer Motion slides, thumbnails, arrows, keyboard navigation, auto-advance with progress bar that pauses on hover)
+- **Resume** — profile, education, experience, skills, and certifications
+- **Contact** — contact form that stores messages in the database, plus social links
+- Dark glassmorphism UI with Framer Motion animations, a canvas cursor, and a scroll-driven WebGL 3D background (a low-poly parachutist that descends with the page scroll — rendered at 50% opacity on the left edge so it floats in front of the content without blocking clicks)
+- **Scroll-to-top button** — floating button on the bottom-right that appears after scrolling and smooth-scrolls back to the top
+
+### Admin panel (`/admin`)
+Protected by a secure, cookie-based authentication system. Fully CRUD-able content:
+
+- **Dashboard** — visitor message inbox with total count and per-message **delete** (with confirmation)
+- **Hero** — edit greeting + introduction
+- **Journey** — add / edit / delete / reorder timeline entries
+- **Projects** — add / edit / delete / reorder projects (including gallery images, one URL per line)
+- **Resume** — profile & summary, education, experience, skills, certifications (add / edit / delete / reorder)
+- **Contact** — page introduction + social links (add / edit / delete / reorder)
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| UI | React 19, TypeScript |
+| Styling | Tailwind CSS v4 |
+| Animations | Framer Motion, Three.js (React Three Fiber) |
+| Database | PostgreSQL (Supabase) |
+| ORM | Prisma 7 with `@prisma/adapter-pg` (driver adapters) |
+| Auth | scrypt password hashing + signed HMAC session tokens (edge-safe, `httpOnly` cookies) |
+| Linting | ESLint (eslint-config-next) |
+
+## 📁 Project Structure
+
+```
+app/
+├── (site)/              # Public pages (home, projects, resume, contact)
+├── admin/               # Admin panel pages
+│   ├── dashboard/       # Message inbox
+│   ├── hero/            # Hero content editor
+│   ├── journey/         # Journey timeline editor
+│   ├── projects/        # Projects editor
+│   ├── resume/          # Resume editors (profile, education, experience, skills, certifications)
+│   └── contact/         # Contact intro + social links editor
+├── login/               # Admin login page
+└── db-controller/       # Server actions (auth, content, messages)
+components/
+├── AdminLayout.tsx      # Admin shell (sidebar, topbar, user dropdown, logout)
+├── admin/               # Reusable admin UI (ActionForm, DeleteButton, MoveButton, ui.tsx, ...)
+├── Navbar.tsx           # Fixed glassy navbar for the public site
+├── CanvasCursor.tsx     # Custom canvas cursor overlay
+├── Scroll3DBackground.tsx  # Scroll-driven WebGL 3D scene (React Three Fiber)
+├── ScrollToTopButton.tsx   # Floating scroll-to-top button
+├── ProjectGallery.tsx   # Animated project image gallery (autoplay, thumbnails)
+├── DeleteMessageButton.tsx # Message delete with confirmation
+├── LoginForm.tsx        # Login form (useActionState)
+├── ContactForm.tsx      # Public contact form
+└── ...                  # Other public site components
+lib/
+├── prisma.ts            # Prisma client (Pg driver adapter)
+├── password.ts          # scrypt hashing + verification
+└── session.ts           # Signed HMAC session token create/verify
+prisma/
+├── schema.prisma        # Database schema
+└── migrations/          # SQL migrations (applied via pg script, see note below)
+middleware.ts            # Session verification for /admin routes
+prisma.config.ts         # Prisma CLI configuration
+```
+
+## 🗄 Database Schema
+
+- `Project` — title, type, year, description, stacks, features, long-form sections, gallery images, order
+- `Message` — visitor contact form submissions (name, email, message)
+- `HeroContent` — homepage greeting + description
+- `Journey` — timeline entries (year, title, description, status, type, tech, order)
+- `Education` — period, degree, description, order
+- `Experience` — title, period, company, isLatest, highlights, order
+- `Skill` — name, order
+- `Certification` — title, provider, year, logoText, verifyUrl, order
+- `SocialLink` — name, url, order
+- `ContentSetting` — key/value content settings (resume profile, page intros)
+- `User` — admin accounts (email, name, passwordHash)
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+
+- Node.js 20+
+- A PostgreSQL database (e.g. Supabase)
+
+### 2. Environment variables
+
+Create a `.env` file at the project root:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/database?pgbouncer=true"
+DIRECT_URL="postgresql://USER:PASSWORD@HOST:PORT/database"
+SESSION_SECRET="<random 64-char hex string>"
+```
+
+- `DATABASE_URL` / `DIRECT_URL` — connection strings for Prisma (Supabase pooler config shown above).
+- `SESSION_SECRET` — used to sign admin session tokens. Generate one with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### 3. Install & setup
+
+```bash
+npm install
+npx prisma generate
+npx prisma db push   # or: npx prisma migrate dev
+npm run seed         # seeds content + admin user
+```
+
+> Note: this project uses Prisma 7 with driver adapters — `@prisma/client` is instantiated with the `pg` Pool adapter (see `lib/prisma.ts`). Schema changes are stored as SQL files in `prisma/migrations/` and applied by running the SQL directly against the database (then inserting the corresponding `_prisma_migrations` row), since `prisma migrate dev` is unavailable with the driver-adapter setup.
+
+### 4. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the public site, and [http://localhost:3000/login](http://localhost:3000/login) for the admin panel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Default admin account (from seed)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+Email:    admin@example.com
+Password: admin123
+```
 
-## Learn More
+**Change this password in production** by updating the `User` table or implementing a password-change flow.
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Authentication & Security
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Passwords are hashed with **scrypt** and a random per-user salt (`salt:hash` format).
+- Sessions use a signed token (`{userId, exp}` + HMAC signature) stored in an `httpOnly`, `SameSite=Lax` cookie.
+- `middleware.ts` verifies the token signature and expiry on all `/admin/*` routes and redirects unauthenticated/forged requests to `/login`.
+- Server actions (`auth-actions.ts`, `content-actions.ts`) handle all writes server-side; they catch Prisma `P2002`-style errors and re-throw Next.js redirects correctly after the (async) Prisma calls (`rethrowRedirect`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📦 Scripts
 
-## Deploy on Vercel
+| Script | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Production build |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run ESLint |
+| `npm run seed` | Seed database content + admin user (`prisma/seed.ts`) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📄 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private project. All rights reserved.
