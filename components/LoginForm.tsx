@@ -44,7 +44,7 @@ export default function LoginForm() {
         disabled={pending}
         className="mt-2 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-lg disabled:opacity-50"
       >
-        {pending ? "Processing..." : "Login &rarr;"}
+        {pending ? "Processing..." : "Login"}
       </button>
 
       <div className="mt-8">
