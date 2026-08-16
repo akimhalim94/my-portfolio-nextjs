@@ -9,6 +9,7 @@ A modern, full-stack personal portfolio built with the **Next.js App Router**, f
 - **Projects** — project cards with cover images and detail pages featuring an animated image gallery (Framer Motion slides, thumbnails, arrows, keyboard navigation, auto-advance with progress bar that pauses on hover)
 - **Resume** — profile, education, experience, skills, and certifications
 - **Contact** — contact form that stores messages in the database, plus social links
+- **AI Chat Assistant** — floating chat bubble that answers questions about Akim using the site's actual content (pulled from the database into the system prompt), with predefined quick questions, streaming responses, and chat reset on close
 - Dark glassmorphism UI with Framer Motion animations, a canvas cursor, and a scroll-driven WebGL 3D background (a low-poly parachutist that descends with the page scroll — rendered at 50% opacity on the left edge so it floats in front of the content without blocking clicks)
 - **Scroll-to-top button** — floating button on the bottom-right that appears after scrolling and smooth-scrolls back to the top
 
@@ -32,6 +33,7 @@ Protected by a secure, cookie-based authentication system. Fully CRUD-able conte
 | Animations | Framer Motion, Three.js (React Three Fiber) |
 | Database | PostgreSQL (Supabase) |
 | ORM | Prisma 7 with `@prisma/adapter-pg` (driver adapters) |
+| AI | Vercel AI SDK 7 (`ai`, `@ai-sdk/google`, `@ai-sdk/react`) — Google Gemini 3 Flash |
 | Auth | scrypt password hashing + signed HMAC session tokens (edge-safe, `httpOnly` cookies) |
 | Linting | ESLint (eslint-config-next) |
 
@@ -48,6 +50,7 @@ app/
 │   ├── resume/          # Resume editors (profile, education, experience, skills, certifications)
 │   └── contact/         # Contact intro + social links editor
 ├── login/               # Admin login page
+├── api/chat/            # AI chat API route (Gemini + portfolio context)
 └── db-controller/       # Server actions (auth, content, messages)
 components/
 ├── AdminLayout.tsx      # Admin shell (sidebar, topbar, user dropdown, logout)
@@ -56,6 +59,7 @@ components/
 ├── CanvasCursor.tsx     # Custom canvas cursor overlay
 ├── Scroll3DBackground.tsx  # Scroll-driven WebGL 3D scene (React Three Fiber)
 ├── ScrollToTopButton.tsx   # Floating scroll-to-top button
+├── FloatingChatButton.tsx  # Floating AI chat bubble (useChat + quick questions)
 ├── ProjectGallery.tsx   # Animated project image gallery (autoplay, thumbnails)
 ├── DeleteMessageButton.tsx # Message delete with confirmation
 ├── LoginForm.tsx        # Login form (useActionState)
@@ -101,6 +105,7 @@ Create a `.env` file at the project root:
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/database?pgbouncer=true"
 DIRECT_URL="postgresql://USER:PASSWORD@HOST:PORT/database"
 SESSION_SECRET="<random 64-char hex string>"
+GOOGLE_GENERATIVE_AI_API_KEY="<Google AI Studio API key>"
 ```
 
 - `DATABASE_URL` / `DIRECT_URL` — connection strings for Prisma (Supabase pooler config shown above).
@@ -109,6 +114,8 @@ SESSION_SECRET="<random 64-char hex string>"
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
+
+- `GOOGLE_GENERATIVE_AI_API_KEY` — required for the chat assistant (get one at [Google AI Studio](https://aistudio.google.com/)). The model used is `gemini-3-flash-preview` (see `app/api/chat/route.ts`).
 
 ### 3. Install & setup
 
