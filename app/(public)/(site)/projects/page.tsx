@@ -17,9 +17,7 @@ export default async function ProjectsPage() {
         {/* Tajuk & Penerangan */}
         <div className="mb-10 text-center md:text-left">
           <h1 className="text-3xl font-bold mb-2">Projects</h1>
-          <p className="text-gray-400 text-sm">
-            {settings.projects_intro}
-          </p>
+          <p className="text-gray-400 text-sm">{settings.projects_intro}</p>
         </div>
 
         {/* Project Cards List */}
@@ -67,10 +65,15 @@ export default async function ProjectsPage() {
 
                 {/* Ciri-ciri / Features */}
                 <div className="mb-4">
-                  <span className="text-[11px] text-gray-500 font-medium block mb-1.5">Key Features:</span>
+                  <span className="text-[11px] text-gray-500 font-medium block mb-1.5">
+                    Key Features:
+                  </span>
                   <div className="flex flex-wrap gap-1.5">
                     {project.features.map((feature, fIndex) => (
-                      <span key={fIndex} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300">
+                      <span
+                        key={fIndex}
+                        className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-300"
+                      >
                         {feature}
                       </span>
                     ))}
@@ -82,7 +85,10 @@ export default async function ProjectsPage() {
               <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-2">
                 <div className="flex flex-wrap gap-1">
                   {project.stacks.map((stack, sIndex) => (
-                    <span key={sIndex} className="text-[10px] text-blue-400 font-medium bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                    <span
+                      key={sIndex}
+                      className="text-[10px] text-blue-400 font-medium bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20"
+                    >
                       {stack}
                     </span>
                   ))}
@@ -105,7 +111,6 @@ export default async function ProjectsPage() {
             &larr; Return to Homepage
           </Link>
         </div>
-
       </div>
     </main>
   );

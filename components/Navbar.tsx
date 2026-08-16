@@ -3,18 +3,31 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileAboutOpen, setIsMobileAboutOpen] = useState(false);
+  const [isDesktopAboutOpen, setIsDesktopAboutOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => {
     if (path === "/" && pathname === "/") return true;
     if (path !== "/" && pathname.startsWith(path)) return true;
     return false;
   };
+
+  // Tutup dropdown desktop/iPad jika klik di luar kawasan
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDesktopAboutOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
@@ -38,19 +51,27 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation Links (Hidden on mobile) */}
-        <div className="hidden md:flex items-center gap-2 text-sm font-medium">
+        <div className="hidden lg:flex items-center gap-2 text-sm font-medium">
           {/* About Me Dropdown */}
-          <div className="relative group">
+          <div 
+            className="relative group" 
+            ref={dropdownRef}
+            onMouseEnter={() => setIsDesktopAboutOpen(true)}
+            onMouseLeave={() => setIsDesktopAboutOpen(false)}
+          >
             <button
+              onClick={() => setIsDesktopAboutOpen(!isDesktopAboutOpen)}
               className={`px-4 py-1.5 rounded-full transition-all flex items-center gap-1 ${
-                isActive("/#aboutme")
+                isActive("/#aboutme") || isDesktopAboutOpen
                   ? "bg-white/15 text-white shadow-sm"
                   : "text-gray-400 hover:text-white"
               }`}
             >
               About Me
               <svg
-                className="w-3 h-3 opacity-70 group-hover:rotate-180 transition-transform"
+                className={`w-3 h-3 opacity-70 transition-transform ${
+                  isDesktopAboutOpen ? "rotate-180" : "group-hover:rotate-180"
+                }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -65,11 +86,16 @@ export default function Navbar() {
             </button>
 
             {/* Menu Dropdown */}
-            <div className="absolute left-0 top-full pt-2 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div className={`absolute left-0 top-full pt-2 w-60 transition-all duration-200 ${
+              isDesktopAboutOpen 
+                ? "opacity-100 visible" 
+                : "opacity-0 invisible group-hover:opacity-100 group-hover:visible"
+            }`}>
               <div className="p-2 rounded-2xl bg-gray-900/95 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-1">
                 <Link
                   href="/#aboutme"
                   data-view-transition="back"
+                  onClick={() => setIsDesktopAboutOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   👋 Introduction
@@ -77,6 +103,7 @@ export default function Navbar() {
                 <Link
                   href="/#journey"
                   data-view-transition="back"
+                  onClick={() => setIsDesktopAboutOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   📬 Journey & Learning Phases
@@ -141,7 +168,7 @@ export default function Navbar() {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 text-gray-300 hover:text-white focus:outline-none"
+          className="lg:hidden p-2 text-gray-300 hover:text-white focus:outline-none"
           aria-label="Toggle Menu"
         >
           <svg
@@ -171,7 +198,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown Overlay */}
       {isOpen && (
-        <div className="absolute top-20 left-4 right-4 z-50 md:hidden p-4 rounded-3xl bg-gray-950/95 backdrop-blur-xl border border-white/15 shadow-2xl flex flex-col gap-2 text-sm">
+        <div className="absolute top-20 left-4 right-4 z-50 lg:hidden p-4 rounded-3xl bg-gray-950/95 backdrop-blur-xl border border-white/15 shadow-2xl flex flex-col gap-2 text-sm">
           {/* Mobile About Me Dropdown */}
           <div>
             <button
