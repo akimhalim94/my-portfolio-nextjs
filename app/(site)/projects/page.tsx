@@ -28,6 +28,7 @@ export default async function ProjectsPage() {
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
+              data-view-transition="forward"
               className="p-6 rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md hover:border-blue-500/50 transition-all flex flex-col justify-between group"
             >
               <div>
@@ -98,6 +99,7 @@ export default async function ProjectsPage() {
         <div className="mt-8">
           <Link
             href="/"
+            data-view-transition="back"
             className="inline-block px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 rounded-lg text-xs font-medium transition-colors"
           >
             &larr; Return to Homepage

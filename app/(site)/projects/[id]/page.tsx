@@ -21,6 +21,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="pt-4 pb-12">
           <Link
             href="/projects"
+            data-view-transition="back"
             className="inline-block px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl text-xs font-medium transition-colors"
           >
             &larr; Back to Projects
@@ -142,6 +143,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <Link
                   key={other.id}
                   href={`/projects/${other.id}`}
+                  data-view-transition="forward"
                   className="p-5 rounded-xl bg-gray-950/80 border border-white/10 backdrop-blur-md hover:border-blue-500/50 transition-all flex flex-col justify-between group"
                 >
                   <div>
@@ -192,12 +194,14 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="pt-4 pb-12 flex justify-between items-center">
           <Link
             href="/projects"
+            data-view-transition="back"
             className="inline-block px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl text-xs font-medium transition-colors"
           >
             &larr; Back to Projects
           </Link>
           <Link
             href="/"
+            data-view-transition="back"
             className="inline-block px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 rounded-xl text-xs font-medium transition-colors"
           >
             Return to Homepage

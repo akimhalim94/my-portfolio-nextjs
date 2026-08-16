@@ -23,6 +23,7 @@ export default function Navbar() {
         <div className="font-bold text-sm tracking-wider flex items-center">
           <Link
             href="/"
+            data-view-transition="back"
             className="hover:opacity-80 transition-opacity flex items-center gap-2"
           >
             <div className="relative w-8 h-8 overflow-hidden rounded-full">
@@ -68,12 +69,14 @@ export default function Navbar() {
               <div className="p-2 rounded-2xl bg-gray-900/95 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-1">
                 <Link
                   href="/#aboutme"
+                  data-view-transition="back"
                   className="px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   👋 Introduction
                 </Link>
                 <Link
                   href="/#journey"
+                  data-view-transition="back"
                   className="px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   📬 Journey & Learning Phases
@@ -85,6 +88,7 @@ export default function Navbar() {
           {/* Projects */}
           <Link
             href="/projects"
+            data-view-transition="forward"
             className={`px-4 py-1.5 rounded-full transition-all ${
               isActive("/projects")
                 ? "bg-white/15 text-white shadow-sm"
@@ -97,6 +101,7 @@ export default function Navbar() {
           {/* Resume */}
           <Link
             href="/resume"
+            data-view-transition="forward"
             className={`px-4 py-1.5 rounded-full transition-all ${
               isActive("/resume")
                 ? "bg-white/15 text-white shadow-sm"
@@ -109,6 +114,7 @@ export default function Navbar() {
           {/* Contact Me */}
           <Link
             href="/contact"
+            data-view-transition="forward"
             className={`px-4 py-1.5 rounded-full transition-all ${
               isActive("/contact")
                 ? "bg-white/15 text-white shadow-sm"
@@ -121,6 +127,7 @@ export default function Navbar() {
           {/* Login */}
           <Link
             href="/login"
+            data-view-transition="forward"
             className={`px-4 py-1.5 rounded-full transition-all ${
               isActive("/login")
                 ? "bg-white/15 text-white shadow-sm"
@@ -190,6 +197,7 @@ export default function Navbar() {
               <div className="pl-4 pt-1 flex flex-col gap-1 border-l border-white/10 ml-4 mt-1">
                 <Link
                   href="/#aboutme"
+                  data-view-transition="back"
                   onClick={() => setIsOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white hover:bg-white/10"
                 >
@@ -197,6 +205,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/#journey"
+                  data-view-transition="back"
                   onClick={() => setIsOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white hover:bg-white/10"
                 >
@@ -208,6 +217,7 @@ export default function Navbar() {
 
           <Link
             href="/projects"
+            data-view-transition="forward"
             onClick={() => setIsOpen(false)}
             className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
@@ -215,6 +225,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/resume"
+            data-view-transition="forward"
             onClick={() => setIsOpen(false)}
             className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
@@ -222,6 +233,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/contact"
+            data-view-transition="forward"
             onClick={() => setIsOpen(false)}
             className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
@@ -229,6 +241,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/login"
+            data-view-transition="forward"
             onClick={() => setIsOpen(false)}
             className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >

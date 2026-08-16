@@ -84,6 +84,7 @@ export default async function ResumePage() {
                 <div className="pt-1">
                   <Link
                     href="/contact"
+                    data-view-transition="forward"
                     className="inline-block font-medium px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-300 hover:bg-blue-600/30 transition-colors"
                   >
                     Reach Me &rarr;
@@ -224,6 +225,7 @@ export default async function ResumePage() {
         <div className="mt-8">
           <Link
             href="/"
+            data-view-transition="back"
             className="inline-block px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 rounded-lg text-xs font-medium transition-colors"
           >
             &larr; Return to Homepage

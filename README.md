@@ -11,6 +11,7 @@ A modern, full-stack personal portfolio built with the **Next.js App Router**, f
 - **Contact** — contact form that stores messages in the database, plus social links
 - **AI Chat Assistant** — floating chat bubble that answers questions about Akim using the site's actual content (pulled from the database into the system prompt), with predefined quick questions, streaming responses, and chat reset on close
 - Dark glassmorphism UI with Framer Motion animations, a canvas cursor, and a scroll-driven WebGL 3D background (a low-poly parachutist that descends with the page scroll — rendered at 50% opacity on the left edge so it floats in front of the content without blocking clicks)
+- **Page transitions** — every internal navigation animates via the native browser View Transitions API (no extra dependencies): a crossfade by default, a directional slide when moving deeper into the site ("forward" links: navbar items, project cards) and a reverse slide on "back" links (logo, *Return to Homepage*, *Back to Projects*). Respects `prefers-reduced-motion` and falls back to instant navigation in browsers without support
 - **Scroll-to-top button** — floating button on the bottom-right that appears after scrolling and smooth-scrolls back to the top
 
 ### Admin panel (`/admin`)
@@ -30,7 +31,7 @@ Protected by a secure, cookie-based authentication system. Fully CRUD-able conte
 | Framework | Next.js 16 (App Router, Turbopack) |
 | UI | React 19, TypeScript |
 | Styling | Tailwind CSS v4 |
-| Animations | Framer Motion, Three.js (React Three Fiber) |
+| Animations | Framer Motion, Three.js (React Three Fiber), native View Transitions API |
 | Database | PostgreSQL (Supabase) |
 | ORM | Prisma 7 with `@prisma/adapter-pg` (driver adapters) |
 | AI | Vercel AI SDK 7 (`ai`, `@ai-sdk/google`, `@ai-sdk/react`) — Google Gemini 3 Flash |
@@ -56,6 +57,7 @@ components/
 ├── AdminLayout.tsx      # Admin shell (sidebar, topbar, user dropdown, logout)
 ├── admin/               # Reusable admin UI (ActionForm, DeleteButton, MoveButton, ui.tsx, ...)
 ├── Navbar.tsx           # Fixed glassy navbar for the public site
+├── ViewTransitions.tsx  # Page transition engine (View Transitions API wrapper around Next.js navigation)
 ├── CanvasCursor.tsx     # Custom canvas cursor overlay
 ├── Scroll3DBackground.tsx  # Scroll-driven WebGL 3D scene (React Three Fiber)
 ├── ScrollToTopButton.tsx   # Floating scroll-to-top button

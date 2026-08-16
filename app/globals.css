@@ -24,3 +24,87 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ============ Page view transitions ============ */
+
+/* Default: crossfade between old and new page. */
+::view-transition-old(root) {
+  animation:
+    vt-fade-out 150ms ease-in both;
+}
+::view-transition-new(root) {
+  animation:
+    vt-fade-in 210ms ease-out 150ms both;
+}
+
+/* Forward navigation (tagged with data-view-transition="forward"):
+   old page slides out left, new page slides in from the right. */
+html.vt-forward::view-transition-old(root) {
+  animation:
+    vt-fade-out 150ms ease-in both,
+    vt-slide-out-left 400ms ease-in-out both;
+}
+html.vt-forward::view-transition-new(root) {
+  animation:
+    vt-fade-in 210ms ease-out 150ms both,
+    vt-slide-in-right 400ms ease-in-out both;
+}
+
+/* Back navigation (tagged with data-view-transition="back"):
+   old page slides out right, new page slides in from the left. */
+html.vt-back::view-transition-old(root) {
+  animation:
+    vt-fade-out 150ms ease-in both,
+    vt-slide-out-right 400ms ease-in-out both;
+}
+html.vt-back::view-transition-new(root) {
+  animation:
+    vt-fade-in 210ms ease-out 150ms both,
+    vt-slide-in-left 400ms ease-in-out both;
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vt-slide-out-left {
+  to {
+    transform: translateX(-48px);
+  }
+}
+@keyframes vt-slide-in-right {
+  from {
+    transform: translateX(48px);
+  }
+}
+@keyframes vt-slide-out-right {
+  to {
+    transform: translateX(48px);
+  }
+}
+@keyframes vt-slide-in-left {
+  from {
+    transform: translateX(-48px);
+  }
+}
+
+/* Keep the page interactive while a transition runs: the ::view-transition
+   overlay otherwise captures all pointer events. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
