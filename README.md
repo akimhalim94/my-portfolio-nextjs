@@ -35,22 +35,23 @@ Protected by a secure, cookie-based authentication system. Fully CRUD-able conte
 | Database | PostgreSQL (Supabase) |
 | ORM | Prisma 7 with `@prisma/adapter-pg` (driver adapters) |
 | AI | Vercel AI SDK 7 (`ai`, `@ai-sdk/google`, `@ai-sdk/react`) — Google Gemini 3 Flash |
-| Auth | scrypt password hashing + signed HMAC session tokens (edge-safe, `httpOnly` cookies) |
+| Auth | scrypt password hashing + signed HMAC session tokens (Web Crypto, `httpOnly` cookies — safe for the Node.js proxy runtime) |
 | Linting | ESLint (eslint-config-next) |
 
 ## 📁 Project Structure
 
 ```
 app/
-├── (site)/              # Public pages (home, projects, resume, contact)
-├── admin/               # Admin panel pages
+├── (public)/            # Public-only chrome — navbar + AI chat bubble (layout)
+│   └── (site)/          # Public pages (home, projects, resume, contact)
+├── login/               # Admin login page (bare — no public chrome)
+├── admin/               # Admin panel pages (no public chrome — its own shell)
 │   ├── dashboard/       # Message inbox
 │   ├── hero/            # Hero content editor
 │   ├── journey/         # Journey timeline editor
 │   ├── projects/        # Projects editor
 │   ├── resume/          # Resume editors (profile, education, experience, skills, certifications)
 │   └── contact/         # Contact intro + social links editor
-├── login/               # Admin login page
 ├── api/chat/            # AI chat API route (Gemini + portfolio context)
 └── db-controller/       # Server actions (auth, content, messages)
 components/
@@ -74,8 +75,8 @@ lib/
 prisma/
 ├── schema.prisma        # Database schema
 └── migrations/          # SQL migrations (applied via pg script, see note below)
-middleware.ts            # Session verification for /admin routes
-prisma.config.ts         # Prisma CLI configuration
+proxy.ts                   # Session verification for /admin routes (proxy convention, Next 16)
+prisma.config.ts           # Prisma CLI configuration
 ```
 
 ## 🗄 Database Schema
@@ -151,7 +152,7 @@ Password: admin123
 
 - Passwords are hashed with **scrypt** and a random per-user salt (`salt:hash` format).
 - Sessions use a signed token (`{userId, exp}` + HMAC signature) stored in an `httpOnly`, `SameSite=Lax` cookie.
-- `middleware.ts` verifies the token signature and expiry on all `/admin/*` routes and redirects unauthenticated/forged requests to `/login`.
+- `proxy.ts` verifies the token signature and expiry on all `/admin/*` routes and redirects unauthenticated/forged requests to `/login`.
 - Server actions (`auth-actions.ts`, `content-actions.ts`) handle all writes server-side; they catch Prisma `P2002`-style errors and re-throw Next.js redirects correctly after the (async) Prisma calls (`rethrowRedirect`).
 
 ## 📦 Scripts

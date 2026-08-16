@@ -1,5 +1,5 @@
 // Session token management (HMAC-SHA256).
-// Uses Web Crypto only so it works in the middleware edge runtime.
+// Uses Web Crypto only so it works in the proxy Node.js runtime.
 // Format token: "base64url(payload JSON).base64url(signature)"
 
 export const SESSION_COOKIE = "admin_session";
