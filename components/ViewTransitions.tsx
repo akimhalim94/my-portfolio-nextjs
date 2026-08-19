@@ -20,10 +20,7 @@ export default function ViewTransitions() {
   }, [pathname]);
 
   useEffect(() => {
-    if (
-      typeof document === "undefined" ||
-      !("startViewTransition" in document)
-    ) {
+    if (typeof document === "undefined" || !("startViewTransition" in document)) {
       return;
     }
 
@@ -57,7 +54,7 @@ export default function ViewTransitions() {
               if (resolveRef.current === resolve) resolveRef.current = null;
               resolve();
             }
-          }),
+          })
       );
       transition.finished.finally(() => {
         document.documentElement.classList.remove("vt-forward", "vt-back");
