@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-const SAFETY_TIMEOUT = 200;
+const SAFETY_TIMEOUT = 500;
 
 // Wraps client-side navigations in the browser's View Transitions API so
 // page changes animate instead of swapping instantly. Next.js's router push
