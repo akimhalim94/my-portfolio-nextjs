@@ -18,7 +18,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   if (projects.length === 0) {
     return (
       <main className="min-h-screen text-white pt-28 p-8 flex flex-col items-center">
-        <p className="text-gray-400 text-sm">No projects available at the moment.</p>
+        <p className="text-gray-400 text-sm">
+          No projects available at the moment.
+        </p>
         <div className="pt-4 pb-12">
           <Link
             href="/projects"
@@ -39,9 +41,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     await Promise.all(
       projects.map(
         async (item) =>
-          [item.id, await resolveProjectImageSrcs(item.images)] as const
-      )
-    )
+          [item.id, await resolveProjectImageSrcs(item.images)] as const,
+      ),
+    ),
   );
   const gallery = imageMap.get(project.id) ?? [];
 
@@ -118,7 +120,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 rounded-xl text-xs font-semibold transition-all hover:border-blue-500/60 hover:gap-3"
               >
                 Visit Project
-                <span aria-hidden>&nearr;</span>
+                <span aria-hidden></span>
               </a>
             </div>
           )}
