@@ -227,6 +227,7 @@ type ProjectFormInput = {
   year: string;
   description: string;
   images: string[];
+  url: string;
   stacks: string[];
   features: string[];
   whatsInside: string;
@@ -243,6 +244,7 @@ async function readProjectForm(
     year: getValue(formData, "year"),
     description: getValue(formData, "description"),
     images: await pickExistingProjectImages(formData.getAll("images")),
+    url: getValue(formData, "url"),
     stacks: parseList(formData.get("stacks") as string | null),
     features: parseList(formData.get("features") as string | null),
     whatsInside: getValue(formData, "whatsInside"),
@@ -254,6 +256,9 @@ async function readProjectForm(
 function validateProject(data: ProjectFormInput): string | null {
   if (!data.title || !data.type || !data.year || !data.description) {
     return "Please fill in all required fields.";
+  }
+  if (data.url && !/^https?:\/\/\S+$/i.test(data.url)) {
+    return "Project link must start with http:// or https://";
   }
   return null;
 }
@@ -271,7 +276,11 @@ export async function createProjectAction(
       orderBy: { order: "desc" },
     });
     await prisma.project.create({
-      data: { ...data, order: (last?.order ?? -1) + 1 },
+      data: {
+        ...data,
+        url: data.url || null,
+        order: (last?.order ?? -1) + 1,
+      },
     });
     revalidateAll();
     redirect("/admin/projects");
@@ -292,7 +301,10 @@ export async function updateProjectAction(
   if (!id || error) return { success: false, error: error || "Invalid ID." };
 
   try {
-    await prisma.project.update({ where: { id }, data });
+    await prisma.project.update({
+      where: { id },
+      data: { ...data, url: data.url || null },
+    });
     revalidateAll();
     redirect("/admin/projects");
   } catch (e) {

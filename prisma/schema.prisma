@@ -13,6 +13,7 @@ model Project {
   year        String
   description String
   images      String[]
+  url         String?
   stacks      String[]
   features    String[]
   whatsInside String?

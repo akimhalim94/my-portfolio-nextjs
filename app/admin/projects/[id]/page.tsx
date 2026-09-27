@@ -111,6 +111,18 @@ export default async function AdminProjectEditPage({ params }: PageProps) {
               />
             </div>
             <div className="sm:col-span-2">
+              <label className={labelCls}>
+                Project Link (leave blank to hide the button)
+              </label>
+              <input
+                type="url"
+                name="url"
+                defaultValue={project.url ?? ""}
+                placeholder="https://example.com/project"
+                className={inputCls}
+              />
+            </div>
+            <div className="sm:col-span-2">
               <label className={labelCls}>What&apos;s Inside</label>
               <textarea
                 name="whatsInside"
