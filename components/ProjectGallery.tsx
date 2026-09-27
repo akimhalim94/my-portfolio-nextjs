@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 type Direction = 1 | -1;
@@ -22,6 +22,9 @@ const slideVariants = {
   }),
 };
 
+const lightboxBtnCls =
+  "absolute top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-blue-600/70 border border-white/10 text-white text-lg flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 focus:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400";
+
 export default function ProjectGallery({
   images,
   title,
@@ -31,6 +34,9 @@ export default function ProjectGallery({
 }) {
   const [[index, direction], setState] = useState<[number, Direction]>([0, 1]);
   const [paused, setPaused] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const goTo = useCallback(
     (next: number) => {
@@ -44,26 +50,48 @@ export default function ProjectGallery({
     [images.length]
   );
 
+  const openLightbox = useCallback(() => setLightboxOpen(true), []);
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+  const restoreStageFocus = useCallback(() => triggerRef.current?.focus(), []);
+
   useEffect(() => {
-    if (paused || images.length < 2) return;
+    if (paused || lightboxOpen || images.length < 2) return;
     const id = setInterval(() => {
       setState(([prev]) => [((prev + 1) % images.length), 1]);
     }, AUTOPLAY_MS);
     return () => clearInterval(id);
-  }, [paused, images.length]);
+  }, [paused, lightboxOpen, images.length]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") goTo(index - 1);
-      if (e.key === "ArrowRight") goTo(index + 1);
+      if (e.key === "Escape" && lightboxOpen) {
+        e.preventDefault();
+        closeLightbox();
+        return;
+      }
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        if (lightboxOpen) e.preventDefault();
+        goTo(e.key === "ArrowLeft" ? index - 1 : index + 1);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [goTo, index]);
+  }, [goTo, index, lightboxOpen, closeLightbox]);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [lightboxOpen]);
 
   if (images.length === 0) return null;
 
   const current = images[index];
+  const caption = `${title} screenshot ${index + 1} of ${images.length}`;
 
   return (
     <div
@@ -88,7 +116,7 @@ export default function ProjectGallery({
           >
             <Image
               src={current}
-              alt={`${title} screenshot ${index + 1}`}
+              alt={caption}
               fill
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
@@ -97,37 +125,58 @@ export default function ProjectGallery({
           </motion.div>
         </AnimatePresence>
 
+        {/* Full-screen trigger */}
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={openLightbox}
+          aria-label={`Open full screen: ${caption}`}
+          className="absolute inset-0 z-10 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400"
+        />
+
+        {/* Zoom hint */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute top-3 right-3 z-20 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-gray-200 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          Click to enlarge
+        </span>
+
         {/* Arrows */}
-        <button
-          onClick={() => goTo(index - 1)}
-          aria-label="Previous image"
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-blue-600/70 border border-white/10 text-white text-sm flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 opacity-0 group-hover:opacity-100 focus:opacity-100"
-        >
-          ←
-        </button>
-        <button
-          onClick={() => goTo(index + 1)}
-          aria-label="Next image"
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-blue-600/70 border border-white/10 text-white text-sm flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 opacity-0 group-hover:opacity-100 focus:opacity-100"
-        >
-          →
-        </button>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={() => goTo(index - 1)}
+              aria-label="Previous image"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/50 hover:bg-blue-600/70 border border-white/10 text-white text-sm flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 opacity-0 group-hover:opacity-100 focus:opacity-100"
+            >
+              ←
+            </button>
+            <button
+              onClick={() => goTo(index + 1)}
+              aria-label="Next image"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/50 hover:bg-blue-600/70 border border-white/10 text-white text-sm flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 opacity-0 group-hover:opacity-100 focus:opacity-100"
+            >
+              →
+            </button>
+          </>
+        )}
 
         {/* Counter */}
         <motion.span
           key={index}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-3 right-3 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-gray-200 backdrop-blur-sm"
+          className="absolute bottom-3 right-3 z-20 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-gray-200 backdrop-blur-sm"
         >
           {index + 1} / {images.length}
         </motion.span>
 
         {/* Autoplay Progress */}
-        {!paused && images.length > 1 && (
+        {!paused && !lightboxOpen && images.length > 1 && (
           <div
             aria-hidden
-            className="absolute bottom-3 left-3 h-1 w-24 rounded-full bg-white/10 overflow-hidden"
+            className="absolute bottom-3 left-3 z-20 h-1 w-24 rounded-full bg-white/10 overflow-hidden"
           >
             <motion.div
               key={index}
@@ -170,6 +219,82 @@ export default function ProjectGallery({
           </button>
         ))}
       </div>
+
+      {/* Lightbox */}
+      <AnimatePresence onExitComplete={restoreStageFocus}>
+        {lightboxOpen && (
+          <motion.div
+            key="lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${title} image viewer`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed inset-0 z-[60]"
+          >
+            <div
+              onClick={closeLightbox}
+              className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+            />
+
+            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-10 pointer-events-none">
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+                className="relative w-full h-full max-w-6xl pointer-events-auto"
+              >
+                <Image
+                  src={current}
+                  alt={caption}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                />
+              </motion.div>
+            </div>
+
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={closeLightbox}
+              aria-label="Close image viewer"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-black/60 hover:bg-red-600/70 border border-white/10 text-white flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+            >
+              ✕
+            </button>
+
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={() => goTo(index - 1)}
+                  aria-label="Previous image"
+                  className={`${lightboxBtnCls} left-2 sm:left-6`}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => goTo(index + 1)}
+                  aria-label="Next image"
+                  className={`${lightboxBtnCls} right-2 sm:right-6`}
+                >
+                  →
+                </button>
+              </>
+            )}
+
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center gap-1 text-center">
+              <span className="text-[11px] text-gray-200">{caption}</span>
+              <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-gray-300 backdrop-blur-sm">
+                {index + 1} / {images.length}
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

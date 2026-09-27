@@ -6,7 +6,7 @@ A modern, full-stack personal portfolio built with the **Next.js App Router**, f
 
 ### Public site
 - **Home** — hero section (greeting + intro) and "The Journey & Learning Phases" timeline
-- **Projects** — project cards with cover images and detail pages featuring an animated image gallery (Framer Motion slides, thumbnails, arrows, keyboard navigation, auto-advance with progress bar that pauses on hover). Images are served from the `public/project-images/` folder, never from external URLs; a project with no image assigned to it renders without any image area (no placeholder)
+- **Projects** — project cards with cover images and detail pages featuring an animated image gallery (Framer Motion slides, thumbnails, arrows, keyboard navigation, auto-advance with progress bar that pauses on hover). Clicking the gallery image opens a full-screen lightbox (`role="dialog"`, body scroll locked, `Esc` to close, backdrop/✕ to close, arrow keys to page through, focus moves to the close button and is returned to the gallery on exit) so the full-resolution screenshot is readable. Images are served from the `public/project-images/` folder, never from external URLs; a project with no image assigned to it renders without any image area (no placeholder)
 - **Resume** — profile, education, experience, skills, and certifications
 - **Contact** — contact form that stores messages in the database, plus social links
 - **AI Chat Assistant** — floating chat bubble that answers questions about Akim using the site's actual content (pulled from the database into the system prompt), with predefined quick questions, streaming responses, and chat reset on close
@@ -65,7 +65,7 @@ components/
 ├── Scroll3DBackground.tsx  # Scroll-driven WebGL 3D scene (React Three Fiber)
 ├── ScrollToTopButton.tsx   # Floating scroll-to-top button
 ├── FloatingChatButton.tsx  # Floating AI chat bubble (useChat + quick questions)
-├── ProjectGallery.tsx   # Animated project image gallery (autoplay, thumbnails)
+├── ProjectGallery.tsx   # Animated project image gallery (autoplay, thumbnails) + full-screen lightbox
 ├── DeleteMessageButton.tsx # Message delete with confirmation
 ├── LoginForm.tsx        # Login form (useActionState)
 ├── ContactForm.tsx      # Public contact form
