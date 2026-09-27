@@ -7,6 +7,7 @@ import ProjectImagePicker from "@/components/admin/ProjectImagePicker";
 import {
   getProjects,
   getContentSettings,
+  getProjectImagesInUse,
   createProjectAction,
   deleteProjectAction,
   moveProjectAction,
@@ -15,9 +16,10 @@ import {
 import { inputCls, labelCls, cardCls } from "@/components/admin/ui";
 
 export default async function AdminProjectsPage() {
-  const [projects, settings] = await Promise.all([
+  const [projects, settings, imagesInUse] = await Promise.all([
     getProjects(),
     getContentSettings(),
+    getProjectImagesInUse(),
   ]);
 
   return (
@@ -146,7 +148,7 @@ export default async function AdminProjectsPage() {
                 placeholder="Description of why the project was built..."
               />
             </div>
-            <ProjectImagePicker />
+            <ProjectImagePicker inUse={imagesInUse} />
           </ActionForm>
         </div>
 

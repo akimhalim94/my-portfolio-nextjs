@@ -204,6 +204,23 @@ export async function getProject(id: string) {
   return prisma.project.findUnique({ where: { id } });
 }
 
+export async function getProjectImagesInUse(
+  excludeProjectId?: string
+): Promise<Record<string, string>> {
+  const projects = await prisma.project.findMany({
+    where: excludeProjectId ? { id: { not: excludeProjectId } } : undefined,
+    select: { title: true, images: true },
+  });
+
+  const inUse: Record<string, string> = {};
+  for (const project of projects) {
+    for (const image of project.images) {
+      if (!inUse[image]) inUse[image] = project.title;
+    }
+  }
+  return inUse;
+}
+
 type ProjectFormInput = {
   title: string;
   type: string;

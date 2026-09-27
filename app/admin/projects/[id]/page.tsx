@@ -5,6 +5,7 @@ import ActionForm from "@/components/admin/ActionForm";
 import ProjectImagePicker from "@/components/admin/ProjectImagePicker";
 import {
   getProject,
+  getProjectImagesInUse,
   updateProjectAction,
 } from "@/app/db-controller/content-actions";
 import { inputCls, labelCls, cardCls } from "@/components/admin/ui";
@@ -17,7 +18,10 @@ interface PageProps {
 
 export default async function AdminProjectEditPage({ params }: PageProps) {
   const { id } = await params;
-  const project = await getProject(id);
+  const [project, imagesInUse] = await Promise.all([
+    getProject(id),
+    getProjectImagesInUse(id),
+  ]);
 
   if (!project) notFound();
 
@@ -133,7 +137,7 @@ export default async function AdminProjectEditPage({ params }: PageProps) {
                 className={`${inputCls} resize-none`}
               />
             </div>
-            <ProjectImagePicker selected={project.images} />
+            <ProjectImagePicker selected={project.images} inUse={imagesInUse} />
           </ActionForm>
         </div>
       </div>

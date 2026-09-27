@@ -21,7 +21,7 @@ Protected by a secure, cookie-based authentication system. Fully CRUD-able conte
 - **Dashboard** — visitor message inbox with total count and per-message **delete** (with confirmation)
 - **Hero** — edit greeting + introduction
 - **Journey** — add / edit / delete / reorder timeline entries
-- **Projects** — add / edit / delete / reorder projects, including gallery images picked as thumbnails from `public/project-images/` (first pick = card cover, the rest = gallery)
+- **Projects** — add / edit / delete / reorder projects, including gallery images picked as thumbnails from `public/project-images/` (first pick = card cover, the rest = gallery). An image already assigned to another project is shown but locked, so two projects can never claim the same screenshot
 - **Resume** — profile & summary, education, experience, skills, certifications (add / edit / delete / reorder)
 - **Contact** — page introduction + social links (add / edit / delete / reorder)
 
@@ -144,7 +144,8 @@ Project images are plain files in `public/project-images/` — there is no uploa
 
 - Drop an image into `public/project-images/`, then reload `/admin/projects`. The folder is scanned server-side, so only files actually present are listed (and only `png`, `jpg`, `jpeg`, `webp`, `avif`, `gif` are picked up).
 - In the project form, tick the thumbnails to attach them to a project. The **first ticked file is the cover** used on the project card; the rest become the detail-page gallery. Ticking in DOM order = gallery order.
-- `Project.images` stores plain file names. The server actions drop anything that isn't a real file in the folder, so a deleted/renamed file simply stops rendering.
+- An image that is already attached to a **different** project cannot be ticked — it renders dimmed, disabled, and badged with the owning project title (when editing a project, its own images are always tickable). This is a UI-level guard: `getProjectImagesInUse()` in `app/db-controller/content-actions.ts` builds the file → project map, excluding the project being edited. Free an image by removing it from its current project first.
+- `Project.images` stores plain file names. The server actions drop anything that isn't a real file in the folder, so a deleted/renamed file simply stops rendering (this is also how leftover `picsum.photos` URLs from older seeds get cleaned up: save the project once and they disappear).
 - A project with no ticked image renders with no image area at all — the cover block and the gallery are omitted rather than showing a placeholder.
 - The seed expects `public/project-images/SFC 1.png` and `SFC 2.png`; without them, the seeded *SFC System* project renders blank until you attach images in the admin panel.
 
