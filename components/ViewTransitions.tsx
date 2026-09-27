@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-const SAFETY_TIMEOUT = 500;
+const SAFETY_TIMEOUT = 600;
 
 // Wraps client-side navigations in the browser's View Transitions API so
 // page changes animate instead of swapping instantly. Next.js's router push
@@ -20,7 +20,10 @@ export default function ViewTransitions() {
   }, [pathname]);
 
   useEffect(() => {
-    if (typeof document === "undefined" || !("startViewTransition" in document)) {
+    if (
+      typeof document === "undefined" ||
+      !("startViewTransition" in document)
+    ) {
       return;
     }
 
@@ -54,7 +57,7 @@ export default function ViewTransitions() {
               if (resolveRef.current === resolve) resolveRef.current = null;
               resolve();
             }
-          })
+          }),
       );
       transition.finished.finally(() => {
         document.documentElement.classList.remove("vt-forward", "vt-back");
