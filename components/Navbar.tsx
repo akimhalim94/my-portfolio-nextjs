@@ -110,7 +110,7 @@ export default function Navbar() {
                   onClick={() => setIsDesktopAboutOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  👋 Introduction
+                  Introduction
                 </Link>
                 <Link
                   href="/#journey"
@@ -118,7 +118,7 @@ export default function Navbar() {
                   onClick={() => setIsDesktopAboutOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  📬 Journey & Learning Phases
+                  Journey & Learning Phases
                 </Link>
               </div>
             </div>
