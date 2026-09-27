@@ -31,7 +31,12 @@ export default function FloatingChatButton() {
   };
 
   return (
-    <div className="fixed bottom-4 right-18 z-50">
+    // Excluded from the page transition so the chat button and its popup do not
+    // slide with the page content. See the `site-chat` rules in globals.css.
+    <div
+      style={{ viewTransitionName: "site-chat" }}
+      className="fixed bottom-4 right-18 z-50"
+    >
       {/* Kotak Chat (Popup) */}
       {isOpen && (
         <div className="absolute bottom-16 right-0 w-72 sm:w-80 h-[420px] p-4 rounded-2xl bg-gray-950/95 backdrop-blur-xl border border-white/15 shadow-2xl text-white flex flex-col justify-between gap-3 animate-in fade-in slide-in-from-bottom-2">

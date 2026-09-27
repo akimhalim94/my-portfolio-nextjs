@@ -18,6 +18,9 @@ export default function ScrollToTopButton() {
       {visible && (
         <motion.button
           key="scroll-top"
+          // Excluded from the page transition so it does not slide with the
+          // page content. See the `site-scroll-top` rules in globals.css.
+          style={{ viewTransitionName: "site-scroll-top" }}
           initial={{ opacity: 0, y: 16, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.9 }}

@@ -26,6 +26,7 @@ export default async function ProjectsPage() {
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
+              prefetch
               data-view-transition="forward"
               className="p-6 rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md hover:border-blue-500/50 transition-all flex flex-col justify-between group"
             >

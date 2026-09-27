@@ -11,7 +11,8 @@ A modern, full-stack personal portfolio built with the **Next.js App Router**, f
 - **Contact** — contact form that stores messages in the database, plus social links
 - **AI Chat Assistant** — floating chat bubble that answers questions about Akim using the site's actual content (pulled from the database into the system prompt), with predefined quick questions, streaming responses, and chat reset on close
 - Dark glassmorphism UI with Framer Motion animations, a canvas cursor, and a scroll-driven WebGL 3D background (a low-poly parachutist that descends with the page scroll — rendered at 50% opacity on the left edge so it floats in front of the content without blocking clicks)
-- **Page transitions** — every internal navigation animates via the native browser View Transitions API (no extra dependencies): a crossfade by default, a directional slide when moving deeper into the site ("forward" links: navbar items, project cards) and a reverse slide on "back" links (logo, *Return to Homepage*, *Back to Projects*). Respects `prefers-reduced-motion` and falls back to instant navigation in browsers without support
+- **Page transitions** — every internal navigation animates via the native browser View Transitions API (no extra dependencies): a crossfade by default, a directional slide when moving deeper into the site ("forward" links: navbar items, project cards) and a reverse slide on "back" links (logo, *Return to Homepage*, *Back to Projects*). The whole transition is capped at 240ms because the browser blocks painting while one runs. The navbar and floating buttons are excluded from the transition so they hold still as a spatial anchor while the content slides past. Respects `prefers-reduced-motion` and falls back to instant navigation in browsers without support
+- **Prefetched navigation** — the primary nav links and project cards use `<Link prefetch>`, so the destination is already in the router cache by the time they are clicked and the page swaps without a server round trip. Note that prefetching is disabled in `next dev`, so navigation is only instant in a production build (`npm run build && npm start`)
 - **Scroll-to-top button** — floating button on the bottom-right that appears after scrolling and smooth-scrolls back to the top
 
 ### Admin panel (`/admin`)
@@ -59,6 +60,7 @@ components/
 ├── admin/               # Reusable admin UI (ActionForm, DeleteButton, MoveButton, ui.tsx, ...)
 ├── Navbar.tsx           # Fixed glassy navbar for the public site
 ├── ViewTransitions.tsx  # Page transition engine (View Transitions API wrapper around Next.js navigation)
+├── LinkPendingHint.tsx  # Inline pending state for a slow <Link> navigation (must be rendered inside a Link)
 ├── CanvasCursor.tsx     # Custom canvas cursor overlay
 ├── Scroll3DBackground.tsx  # Scroll-driven WebGL 3D scene (React Three Fiber)
 ├── ScrollToTopButton.tsx   # Floating scroll-to-top button

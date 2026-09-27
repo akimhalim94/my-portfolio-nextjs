@@ -27,40 +27,52 @@ body {
 
 /* ============ Page view transitions ============ */
 
-/* Default: crossfade between old and new page. */
-::view-transition-old(root) {
-  animation:
-    vt-fade-out 150ms ease-in both;
-}
-::view-transition-new(root) {
-  animation:
-    vt-fade-in 210ms ease-out 150ms both;
+:root {
+  /* Total transition time is --vt-move. Keep it under ~250ms: the browser
+     blocks painting for the whole animation, so every extra millisecond is
+     added directly to how long the page feels frozen after a click. */
+  --vt-move: 240ms;
+  --vt-enter-fade: 150ms;
+  --vt-exit-fade: 120ms;
+  --vt-distance: 40px;
+  /* Decelerating curve: leaves fast, settles slow, reads as "arrived". */
+  --vt-ease: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Forward navigation (tagged with data-view-transition="forward"):
-   old page slides out left, new page slides in from the right. */
+/* Default (no direction tagged): a short crossfade. The outgoing page fades
+   fast so it stops competing for attention, the incoming page fades in over
+   it. The two overlap, so there is no moment where the screen is empty. */
+::view-transition-old(root) {
+  animation: vt-fade-out var(--vt-exit-fade) ease-in both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in var(--vt-enter-fade) ease-out 40ms both;
+}
+
+/* Forward navigation (data-view-transition="forward"): the old page slides out
+   to the left while the new page slides in from the right.
+
+   The old page deliberately does NOT fade. Animating opacity on a full-viewport
+   snapshot forces a composited alpha pass over the whole page every frame and
+   briefly exposes the 3D background through it. Sliding it out at full opacity
+   is cheaper and looks cleaner. */
 html.vt-forward::view-transition-old(root) {
-  animation:
-    vt-fade-out 150ms ease-in both,
-    vt-slide-out-left 400ms ease-in-out both;
+  animation: vt-out-left var(--vt-move) var(--vt-ease) both;
 }
 html.vt-forward::view-transition-new(root) {
   animation:
-    vt-fade-in 210ms ease-out 150ms both,
-    vt-slide-in-right 400ms ease-in-out both;
+    vt-fade-in var(--vt-enter-fade) ease-out 50ms both,
+    vt-in-forward var(--vt-move) var(--vt-ease) both;
 }
 
-/* Back navigation (tagged with data-view-transition="back"):
-   old page slides out right, new page slides in from the left. */
+/* Back navigation (data-view-transition="back"): mirror of the above. */
 html.vt-back::view-transition-old(root) {
-  animation:
-    vt-fade-out 150ms ease-in both,
-    vt-slide-out-right 400ms ease-in-out both;
+  animation: vt-out-right var(--vt-move) var(--vt-ease) both;
 }
 html.vt-back::view-transition-new(root) {
   animation:
-    vt-fade-in 210ms ease-out 150ms both,
-    vt-slide-in-left 400ms ease-in-out both;
+    vt-fade-in var(--vt-enter-fade) ease-out 50ms both,
+    vt-in-back var(--vt-move) var(--vt-ease) both;
 }
 
 @keyframes vt-fade-out {
@@ -73,31 +85,90 @@ html.vt-back::view-transition-new(root) {
     opacity: 0;
   }
 }
-@keyframes vt-slide-out-left {
+@keyframes vt-out-left {
   to {
-    transform: translateX(-48px);
+    translate: calc(var(--vt-distance) * -1) 0;
   }
 }
-@keyframes vt-slide-in-right {
-  from {
-    transform: translateX(48px);
-  }
-}
-@keyframes vt-slide-out-right {
+@keyframes vt-out-right {
   to {
-    transform: translateX(48px);
+    translate: var(--vt-distance) 0;
   }
 }
-@keyframes vt-slide-in-left {
+@keyframes vt-in-forward {
   from {
-    transform: translateX(-48px);
+    translate: var(--vt-distance) 0;
   }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes vt-in-back {
+  from {
+    translate: calc(var(--vt-distance) * -1) 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+/* Persistent chrome is excluded from the page transition.
+
+   These elements are fixed overlays that must not move: a navbar that slides
+   sideways destroys the user's spatial anchor. Giving them their own
+   view-transition-name also keeps them out of the `root` snapshot, so they are
+   not re-rasterized as part of the sliding page image.
+
+   `root` always paints below every other named group, which is correct here:
+   all three sit above the page content in the real stacking order. */
+::view-transition-group(site-header),
+::view-transition-group(site-scroll-top),
+::view-transition-group(site-chat) {
+  animation: none;
+}
+::view-transition-old(site-header),
+::view-transition-old(site-scroll-top),
+::view-transition-old(site-chat) {
+  /* Without this the old and new chrome are both visible for a frame. */
+  display: none;
+}
+::view-transition-new(site-header),
+::view-transition-new(site-scroll-top),
+::view-transition-new(site-chat) {
+  animation: none;
 }
 
 /* Keep the page interactive while a transition runs: the ::view-transition
    overlay otherwise captures all pointer events. */
 ::view-transition {
   pointer-events: none;
+}
+
+/* Pending state for a slow <Link> navigation. Rendered by LinkPendingHint
+   inside the link, and absolutely positioned so showing it never shifts the
+   link's own layout. The delay means fast navigations never flash it. */
+.link-hint {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+}
+.link-hint.is-pending {
+  animation: link-hint-pulse 900ms ease-in-out 120ms infinite;
+}
+
+@keyframes link-hint-pulse {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.18;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

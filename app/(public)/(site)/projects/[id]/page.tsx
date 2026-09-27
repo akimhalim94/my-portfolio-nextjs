@@ -143,6 +143,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <Link
                   key={other.id}
                   href={`/projects/${other.id}`}
+                  prefetch
                   data-view-transition="forward"
                   className="p-5 rounded-xl bg-gray-950/80 border border-white/10 backdrop-blur-md hover:border-blue-500/50 transition-all flex flex-col justify-between group"
                 >

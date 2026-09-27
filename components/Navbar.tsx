@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import LinkPendingHint from "@/components/LinkPendingHint";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -30,7 +31,13 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
+    // The navbar is named so it is excluded from the page transition and stays
+    // put as a spatial anchor while the content behind it slides. Paired with
+    // the `::view-transition-group(site-header)` rules in globals.css.
+    <header
+      style={{ viewTransitionName: "site-header" }}
+      className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
+    >
       <nav className="w-full max-w-xl flex items-center justify-between px-6 py-3 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] text-white transition-all">
         {/* Logo / Brand */}
         <div className="font-bold text-sm tracking-wider flex items-center">
@@ -115,53 +122,61 @@ export default function Navbar() {
           {/* Projects */}
           <Link
             href="/projects"
+            prefetch
             data-view-transition="forward"
-            className={`px-4 py-1.5 rounded-full transition-all ${
+            className={`relative px-4 py-1.5 rounded-full transition-all ${
               isActive("/projects")
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-gray-400 hover:text-white"
             }`}
           >
             Projects
+            <LinkPendingHint />
           </Link>
 
           {/* Resume */}
           <Link
             href="/resume"
+            prefetch
             data-view-transition="forward"
-            className={`px-4 py-1.5 rounded-full transition-all ${
+            className={`relative px-4 py-1.5 rounded-full transition-all ${
               isActive("/resume")
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-gray-400 hover:text-white"
             }`}
           >
             Resume
+            <LinkPendingHint />
           </Link>
 
           {/* Contact Me */}
           <Link
             href="/contact"
+            prefetch
             data-view-transition="forward"
-            className={`px-4 py-1.5 rounded-full transition-all ${
+            className={`relative px-4 py-1.5 rounded-full transition-all ${
               isActive("/contact")
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-gray-400 hover:text-white"
             }`}
           >
             Contact Me
+            <LinkPendingHint />
           </Link>
 
           {/* Login */}
           <Link
             href="/login"
+            prefetch
             data-view-transition="forward"
-            className={`px-4 py-1.5 rounded-full transition-all ${
+            className={`relative px-4 py-1.5 rounded-full transition-all ${
               isActive("/login")
                 ? "bg-white/15 text-white shadow-sm"
                 : "text-gray-400 hover:text-white"
             }`}
           >
             Login
+            <LinkPendingHint />
           </Link>
         </div>
 
@@ -244,35 +259,43 @@ export default function Navbar() {
 
           <Link
             href="/projects"
+            prefetch
             data-view-transition="forward"
             onClick={() => setIsOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
+            className="relative px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
             Projects
+            <LinkPendingHint />
           </Link>
           <Link
             href="/resume"
+            prefetch
             data-view-transition="forward"
             onClick={() => setIsOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
+            className="relative px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
             Resume
+            <LinkPendingHint />
           </Link>
           <Link
             href="/contact"
+            prefetch
             data-view-transition="forward"
             onClick={() => setIsOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
+            className="relative px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
             Contact Me
+            <LinkPendingHint />
           </Link>
           <Link
             href="/login"
+            prefetch
             data-view-transition="forward"
             onClick={() => setIsOpen(false)}
-            className="px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
+            className="relative px-4 py-2.5 rounded-xl text-gray-300 hover:bg-white/10 transition-colors"
           >
             Login
+            <LinkPendingHint />
           </Link>
         </div>
       )}
