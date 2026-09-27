@@ -22,7 +22,10 @@ export default function Navbar() {
   // Tutup dropdown desktop/iPad jika klik di luar kawasan
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDesktopAboutOpen(false);
       }
     };
@@ -60,8 +63,8 @@ export default function Navbar() {
         {/* Desktop Navigation Links (Hidden on mobile) */}
         <div className="hidden lg:flex items-center gap-2 text-sm font-medium">
           {/* About Me Dropdown */}
-          <div 
-            className="relative group" 
+          <div
+            className="relative group"
             ref={dropdownRef}
             onMouseEnter={() => setIsDesktopAboutOpen(true)}
             onMouseLeave={() => setIsDesktopAboutOpen(false)}
@@ -93,11 +96,13 @@ export default function Navbar() {
             </button>
 
             {/* Menu Dropdown */}
-            <div className={`absolute left-0 top-full pt-2 w-60 transition-all duration-200 ${
-              isDesktopAboutOpen 
-                ? "opacity-100 visible" 
-                : "opacity-0 invisible group-hover:opacity-100 group-hover:visible"
-            }`}>
+            <div
+              className={`absolute left-0 top-full pt-2 w-60 transition-all duration-200 ${
+                isDesktopAboutOpen
+                  ? "opacity-100 visible"
+                  : "opacity-0 invisible group-hover:opacity-100 group-hover:visible"
+              }`}
+            >
               <div className="p-2 rounded-2xl bg-gray-900/95 backdrop-blur-md border border-white/10 shadow-xl flex flex-col gap-1">
                 <Link
                   href="/#aboutme"
@@ -243,7 +248,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white hover:bg-white/10"
                 >
-                  👋 Introduction
+                  Introduction
                 </Link>
                 <Link
                   href="/#journey"
@@ -251,7 +256,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white hover:bg-white/10"
                 >
-                  📬 Journey & Learning Phases
+                  Journey & Learning Phases
                 </Link>
               </div>
             )}

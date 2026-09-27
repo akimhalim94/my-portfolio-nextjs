@@ -135,7 +135,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-1 gap-6">
           <div className="rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 space-y-4">
             <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              📦 What&apos;s Inside
+              What&apos;s Inside
             </h2>
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
               {project.whatsInside}
@@ -144,7 +144,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
           <div className="rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 space-y-4">
             <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              🛠️ How It&apos;s Built
+              How It&apos;s Built
             </h2>
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
               {project.howItsBuilt}
@@ -153,7 +153,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
           <div className="rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 space-y-4">
             <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              💡 Why I Built It
+              Why I Built It
             </h2>
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
               {project.whyIBuiltIt}
