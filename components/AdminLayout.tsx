@@ -140,6 +140,13 @@ export default function AdminLayout({
                   >
                     <span>✏️</span> Edit Profile
                   </Link>
+                  <Link
+                    href="/admin/account"
+                    onClick={() => setDropdownOpen(false)}
+                    className="w-full text-left px-4 py-2 text-xs text-gray-200 hover:bg-white/10 transition-colors flex items-center gap-2"
+                  >
+                    <span>🔑</span> Change Password
+                  </Link>
                   <button
                     onClick={handleLogout}
                     disabled={isLoggingOut}

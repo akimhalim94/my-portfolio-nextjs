@@ -24,6 +24,7 @@ Protected by a secure, cookie-based authentication system. Fully CRUD-able conte
 - **Projects** — add / edit / delete / reorder projects, including gallery images picked as thumbnails from `public/project-images/` (first pick = card cover, the rest = gallery) and an optional project link. An image already assigned to another project is shown but locked, so two projects can never claim the same screenshot
 - **Resume** — profile & summary, education, experience, skills, certifications (add / edit / delete / reorder)
 - **Contact** — page introduction + social links (add / edit / delete / reorder)
+- **Account** — change the admin password from the avatar dropdown (*Change Password*, directly under *Edit Profile*): the current password is re-verified, the new one must be at least 8 characters, must differ from the old one, and is re-hashed with a fresh scrypt salt
 
 ## 🛠 Tech Stack
 
@@ -52,11 +53,12 @@ app/
 │   ├── journey/         # Journey timeline editor
 │   ├── projects/        # Projects editor
 │   ├── resume/          # Resume editors (profile, education, experience, skills, certifications)
+│   ├── account/         # Change password
 │   └── contact/         # Contact intro + social links editor
 ├── api/chat/            # AI chat API route (Gemini + portfolio context)
 └── db-controller/       # Server actions (auth, content, messages)
 components/
-├── AdminLayout.tsx      # Admin shell (sidebar, topbar, user dropdown, logout)
+├── AdminLayout.tsx      # Admin shell (sidebar, topbar, user dropdown: edit profile / change password / logout)
 ├── admin/               # Reusable admin UI (ActionForm, DeleteButton, MoveButton, ProjectImagePicker, ui.tsx, ...)
 ├── Navbar.tsx           # Fixed glassy navbar for the public site
 ├── ViewTransitions.tsx  # Page transition engine (View Transitions API wrapper around Next.js navigation)
@@ -68,6 +70,7 @@ components/
 ├── ProjectGallery.tsx   # Animated project image gallery (autoplay, thumbnails) + full-screen lightbox
 ├── DeleteMessageButton.tsx # Message delete with confirmation
 ├── LoginForm.tsx        # Login form (useActionState)
+├── ChangePasswordForm.tsx  # Admin password change form (useActionState)
 ├── ContactForm.tsx      # Public contact form
 └── ...                  # Other public site components
 lib/
@@ -166,7 +169,7 @@ Email:    admin@example.com
 Password: admin123
 ```
 
-**Change this password in production** by updating the `User` table or implementing a password-change flow.
+**Change this password in production** from *Account* → avatar dropdown → **Change Password** (`/admin/account`). The seed only sets the password when creating the user, so re-running it never resets an existing account.
 
 ## 🔐 Authentication & Security
 
@@ -174,6 +177,7 @@ Password: admin123
 - Sessions use a signed token (`{userId, exp}` + HMAC signature) stored in an `httpOnly`, `SameSite=Lax` cookie.
 - `proxy.ts` verifies the token signature and expiry on all `/admin/*` routes and redirects unauthenticated/forged requests to `/login`.
 - Server actions (`auth-actions.ts`, `content-actions.ts`) handle all writes server-side; they catch Prisma `P2002`-style errors and re-throw Next.js redirects correctly after the (async) Prisma calls (`rethrowRedirect`).
+- `changePasswordAction` re-reads the session from the cookie, re-verifies the current password with `timingSafeEqual`, and only then rewrites the hash. Sessions are stateless, so a password change does not invalidate an already-issued cookie — it expires on its own within `SESSION_DURATION_MS`.
 
 ## 📦 Scripts
 
