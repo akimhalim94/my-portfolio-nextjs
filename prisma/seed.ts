@@ -126,11 +126,7 @@ async function main() {
       year: "2026",
       description:
         "A complete management system with session security controls and database integration.",
-      images: [
-        "https://picsum.photos/seed/sfc-dashboard/1200/675",
-        "https://picsum.photos/seed/sfc-login/1200/675",
-        "https://picsum.photos/seed/sfc-records/1200/675",
-      ],
+      images: ["SFC 1.png", "SFC 2.png"],
       stacks: ["PHP", "MySQL", "JavaScript", "Tailwind CSS"],
       features: [
         "CRUD Operations",
@@ -152,11 +148,7 @@ async function main() {
       year: "2025",
       description:
         "My first personal portfolio built with modern components and a responsive design.",
-      images: [
-        "https://picsum.photos/seed/react-home/1200/675",
-        "https://picsum.photos/seed/react-projects/1200/675",
-        "https://picsum.photos/seed/react-contact/1200/675",
-      ],
+      images: [],
       stacks: ["React", "Tailwind CSS", "HTML5"],
       features: [
         "Component-Based Architecture",
@@ -177,11 +169,7 @@ async function main() {
       year: "2026",
       description:
         "Migrated the portfolio to the Next.js App Router architecture for better performance and SEO.",
-      images: [
-        "https://picsum.photos/seed/next-home/1200/675",
-        "https://picsum.photos/seed/next-admin/1200/675",
-        "https://picsum.photos/seed/next-resume/1200/675",
-      ],
+      images: [],
       stacks: ["Next.js", "TypeScript", "Tailwind CSS"],
       features: [
         "App Router",

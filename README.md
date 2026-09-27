@@ -6,7 +6,7 @@ A modern, full-stack personal portfolio built with the **Next.js App Router**, f
 
 ### Public site
 - **Home** — hero section (greeting + intro) and "The Journey & Learning Phases" timeline
-- **Projects** — project cards with cover images and detail pages featuring an animated image gallery (Framer Motion slides, thumbnails, arrows, keyboard navigation, auto-advance with progress bar that pauses on hover)
+- **Projects** — project cards with cover images and detail pages featuring an animated image gallery (Framer Motion slides, thumbnails, arrows, keyboard navigation, auto-advance with progress bar that pauses on hover). Images are served from the `public/project-images/` folder, never from external URLs; a project with no image assigned to it renders without any image area (no placeholder)
 - **Resume** — profile, education, experience, skills, and certifications
 - **Contact** — contact form that stores messages in the database, plus social links
 - **AI Chat Assistant** — floating chat bubble that answers questions about Akim using the site's actual content (pulled from the database into the system prompt), with predefined quick questions, streaming responses, and chat reset on close
@@ -21,7 +21,7 @@ Protected by a secure, cookie-based authentication system. Fully CRUD-able conte
 - **Dashboard** — visitor message inbox with total count and per-message **delete** (with confirmation)
 - **Hero** — edit greeting + introduction
 - **Journey** — add / edit / delete / reorder timeline entries
-- **Projects** — add / edit / delete / reorder projects (including gallery images, one URL per line)
+- **Projects** — add / edit / delete / reorder projects, including gallery images picked as thumbnails from `public/project-images/` (first pick = card cover, the rest = gallery)
 - **Resume** — profile & summary, education, experience, skills, certifications (add / edit / delete / reorder)
 - **Contact** — page introduction + social links (add / edit / delete / reorder)
 
@@ -57,7 +57,7 @@ app/
 └── db-controller/       # Server actions (auth, content, messages)
 components/
 ├── AdminLayout.tsx      # Admin shell (sidebar, topbar, user dropdown, logout)
-├── admin/               # Reusable admin UI (ActionForm, DeleteButton, MoveButton, ui.tsx, ...)
+├── admin/               # Reusable admin UI (ActionForm, DeleteButton, MoveButton, ProjectImagePicker, ui.tsx, ...)
 ├── Navbar.tsx           # Fixed glassy navbar for the public site
 ├── ViewTransitions.tsx  # Page transition engine (View Transitions API wrapper around Next.js navigation)
 ├── LinkPendingHint.tsx  # Inline pending state for a slow <Link> navigation (must be rendered inside a Link)
@@ -72,18 +72,23 @@ components/
 └── ...                  # Other public site components
 lib/
 ├── prisma.ts            # Prisma client (Pg driver adapter)
+├── project-images.ts    # public/project-images folder scanner + src builder
 ├── password.ts          # scrypt hashing + verification
 └── session.ts           # Signed HMAC session token create/verify
 prisma/
 ├── schema.prisma        # Database schema
+├── seed.ts              # Content + admin user seed
 └── migrations/          # SQL migrations (applied via pg script, see note below)
+public/
+├── project-images/      # Project gallery images (referenced as /project-images/<file>)
+└── audio/               # Chat notification sound
 proxy.ts                   # Session verification for /admin routes (proxy convention, Next 16)
 prisma.config.ts           # Prisma CLI configuration
 ```
 
 ## 🗄 Database Schema
 
-- `Project` — title, type, year, description, stacks, features, long-form sections, gallery images, order
+- `Project` — title, type, year, description, stacks, features, long-form sections, gallery images (file names inside `public/project-images/`, not URLs), order
 - `Message` — visitor contact form submissions (name, email, message)
 - `HeroContent` — homepage greeting + description
 - `Journey` — timeline entries (year, title, description, status, type, tech, order)
@@ -132,6 +137,16 @@ npm run seed         # seeds content + admin user
 ```
 
 > Note: this project uses Prisma 7 with driver adapters — `@prisma/client` is instantiated with the `pg` Pool adapter (see `lib/prisma.ts`). Schema changes are stored as SQL files in `prisma/migrations/` and applied by running the SQL directly against the database (then inserting the corresponding `_prisma_migrations` row), since `prisma migrate dev` is unavailable with the driver-adapter setup.
+
+### 3.1 Project images
+
+Project images are plain files in `public/project-images/` — there is no upload UI and no external image host.
+
+- Drop an image into `public/project-images/`, then reload `/admin/projects`. The folder is scanned server-side, so only files actually present are listed (and only `png`, `jpg`, `jpeg`, `webp`, `avif`, `gif` are picked up).
+- In the project form, tick the thumbnails to attach them to a project. The **first ticked file is the cover** used on the project card; the rest become the detail-page gallery. Ticking in DOM order = gallery order.
+- `Project.images` stores plain file names. The server actions drop anything that isn't a real file in the folder, so a deleted/renamed file simply stops rendering.
+- A project with no ticked image renders with no image area at all — the cover block and the gallery are omitted rather than showing a placeholder.
+- The seed expects `public/project-images/SFC 1.png` and `SFC 2.png`; without them, the seeded *SFC System* project renders blank until you attach images in the admin panel.
 
 ### 4. Run
 

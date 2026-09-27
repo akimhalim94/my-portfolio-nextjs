@@ -3,6 +3,7 @@ import AdminLayout from "@/components/AdminLayout";
 import ActionForm from "@/components/admin/ActionForm";
 import DeleteButton from "@/components/admin/DeleteButton";
 import MoveButton from "@/components/admin/MoveButton";
+import ProjectImagePicker from "@/components/admin/ProjectImagePicker";
 import {
   getProjects,
   getContentSettings,
@@ -91,15 +92,6 @@ export default async function AdminProjectsPage() {
               />
             </div>
             <div>
-              <label className={labelCls}>Gallery Images (one URL per line)</label>
-              <textarea
-                name="images"
-                rows={4}
-                className={`${inputCls} resize-none`}
-                placeholder={"https://...\nhttps://..."}
-              />
-            </div>
-            <div>
               <label className={labelCls}>Stacks (separate with commas)</label>
               <input
                 type="text"
@@ -154,6 +146,7 @@ export default async function AdminProjectsPage() {
                 placeholder="Description of why the project was built..."
               />
             </div>
+            <ProjectImagePicker />
           </ActionForm>
         </div>
 
@@ -187,6 +180,9 @@ export default async function AdminProjectsPage() {
                   </h3>
                   <p className="text-[10px] text-gray-500 mt-1 truncate">
                     Stacks: {project.stacks.join(", ") || "-"}
+                  </p>
+                  <p className="text-[10px] text-gray-500 mt-1 truncate">
+                    Images: {project.images.join(", ") || "None"}
                   </p>
                 </div>
 

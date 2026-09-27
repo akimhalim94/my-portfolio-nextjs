@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AdminLayout from "@/components/AdminLayout";
 import ActionForm from "@/components/admin/ActionForm";
+import ProjectImagePicker from "@/components/admin/ProjectImagePicker";
 import {
   getProject,
   updateProjectAction,
@@ -78,16 +79,6 @@ export default async function AdminProjectEditPage({ params }: PageProps) {
               />
             </div>
             <div>
-              <label className={labelCls}>Gallery Images (one URL per line)</label>
-              <textarea
-                name="images"
-                rows={4}
-                defaultValue={project.images.join("\n")}
-                className={`${inputCls} resize-none`}
-                placeholder={"https://...\nhttps://..."}
-              />
-            </div>
-            <div>
               <label className={labelCls}>Stacks (separate with commas)</label>
               <input
                 type="text"
@@ -142,6 +133,7 @@ export default async function AdminProjectEditPage({ params }: PageProps) {
                 className={`${inputCls} resize-none`}
               />
             </div>
+            <ProjectImagePicker selected={project.images} />
           </ActionForm>
         </div>
       </div>

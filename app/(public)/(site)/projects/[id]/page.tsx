@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getProjects } from "@/app/db-controller/content-actions";
 import ProjectGallery from "@/components/ProjectGallery";
+import { resolveProjectImageSrcs } from "@/lib/project-images";
 
 interface PageProps {
   params: {
@@ -33,6 +34,16 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   // Find project by ID, fallback to the first project if missing
   const project = projects.find((p) => p.id === id) || projects[0];
+
+  const imageMap = new Map(
+    await Promise.all(
+      projects.map(
+        async (item) =>
+          [item.id, await resolveProjectImageSrcs(item.images)] as const
+      )
+    )
+  );
+  const gallery = imageMap.get(project.id) ?? [];
 
   // Filter to get the 3 other projects at the bottom
   const otherProjects = projects.filter((p) => p.id !== project.id);
@@ -100,7 +111,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </div>
 
         {/* ================= GALERI GAMBAR ================= */}
-        <ProjectGallery images={project.images} title={project.title} />
+        {gallery.length > 0 && (
+          <ProjectGallery images={gallery} title={project.title} />
+        )}
 
         {/* ================= PENERANGAN TERPERINCI (WHAT'S INSIDE, HOW, WHY) ================= */}
         <div className="grid grid-cols-1 gap-6">
@@ -139,54 +152,59 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               Other Recent Projects
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {otherProjects.slice(0, 3).map((other) => (
-                <Link
-                  key={other.id}
-                  href={`/projects/${other.id}`}
-                  prefetch
-                  data-view-transition="forward"
-                  className="p-5 rounded-xl bg-gray-950/80 border border-white/10 backdrop-blur-md hover:border-blue-500/50 transition-all flex flex-col justify-between group"
-                >
-                  <div>
-                    <div className="relative -mx-5 -mt-5 mb-4 aspect-video overflow-hidden rounded-t-xl bg-gradient-to-br from-blue-950/50 via-gray-950 to-indigo-950/50">
-                      {other.images[0] ? (
-                        <Image
-                          src={other.images[0]}
-                          alt={`${other.title} cover`}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 40vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-2xl">
-                          📸
+              {otherProjects.slice(0, 3).map((other) => {
+                const cover = imageMap.get(other.id)?.[0];
+
+                return (
+                  <Link
+                    key={other.id}
+                    href={`/projects/${other.id}`}
+                    prefetch
+                    data-view-transition="forward"
+                    className="p-5 rounded-xl bg-gray-950/80 border border-white/10 backdrop-blur-md hover:border-blue-500/50 transition-all flex flex-col justify-between group"
+                  >
+                    <div>
+                      {cover && (
+                        <div className="relative -mx-5 -mt-5 mb-4 aspect-video overflow-hidden rounded-t-xl bg-gray-950">
+                          <Image
+                            src={cover}
+                            alt={`${other.title} cover`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 40vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent" />
+                          <span className="absolute bottom-2.5 left-2.5 text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
+                            {other.type}
+                          </span>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent" />
-                      <span className="absolute bottom-2.5 left-2.5 text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
-                        {other.type}
+                      <div className="flex justify-between items-start mb-2">
+                        {!cover && (
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
+                            {other.type}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-blue-400 font-medium ml-auto">
+                          {other.year}
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors">
+                        {other.title}
+                      </h3>
+                      <p className="text-gray-400 text-xs mt-1 line-clamp-2">
+                        {other.description}
+                      </p>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-blue-400 font-medium">
+                      <span>Explore project</span>
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        &rarr;
                       </span>
                     </div>
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-[10px] text-blue-400 font-medium">
-                        {other.year}
-                      </span>
-                    </div>
-                    <h3 className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors">
-                      {other.title}
-                    </h3>
-                    <p className="text-gray-400 text-xs mt-1 line-clamp-2">
-                      {other.description}
-                    </p>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-blue-400 font-medium">
-                    <span>Explore project</span>
-                    <span className="group-hover:translate-x-1 transition-transform">
-                      &rarr;
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

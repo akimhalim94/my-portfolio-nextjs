@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { pickExistingProjectImages } from "@/lib/project-images";
 
 export type ActionState = {
   success: boolean;
@@ -216,13 +217,15 @@ type ProjectFormInput = {
   whyIBuiltIt: string;
 };
 
-function readProjectForm(formData: FormData): ProjectFormInput {
+async function readProjectForm(
+  formData: FormData
+): Promise<ProjectFormInput> {
   return {
     title: getValue(formData, "title"),
     type: getValue(formData, "type"),
     year: getValue(formData, "year"),
     description: getValue(formData, "description"),
-    images: parseList(formData.get("images") as string | null),
+    images: await pickExistingProjectImages(formData.getAll("images")),
     stacks: parseList(formData.get("stacks") as string | null),
     features: parseList(formData.get("features") as string | null),
     whatsInside: getValue(formData, "whatsInside"),
@@ -242,7 +245,7 @@ export async function createProjectAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const data = readProjectForm(formData);
+  const data = await readProjectForm(formData);
   const error = validateProject(data);
   if (error) return { success: false, error };
 
@@ -267,7 +270,7 @@ export async function updateProjectAction(
   formData: FormData
 ): Promise<ActionState> {
   const id = getValue(formData, "id");
-  const data = readProjectForm(formData);
+  const data = await readProjectForm(formData);
   const error = validateProject(data);
   if (!id || error) return { success: false, error: error || "Invalid ID." };
 

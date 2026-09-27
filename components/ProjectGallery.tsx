@@ -61,29 +61,7 @@ export default function ProjectGallery({
     return () => window.removeEventListener("keydown", onKey);
   }, [goTo, index]);
 
-  if (images.length === 0) {
-    return (
-      <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-950/60 via-gray-950 to-indigo-950/60 border border-white/10 flex items-center justify-center">
-        <motion.div
-          className="text-center space-y-2"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            className="text-4xl"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-          >
-            📸
-          </motion.div>
-          <p className="text-xs text-gray-400 font-medium">
-            No gallery images yet
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
+  if (images.length === 0) return null;
 
   const current = images[index];
 
@@ -114,7 +92,7 @@ export default function ProjectGallery({
               fill
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
-              priority={index === 0}
+              preload={index === 0}
             />
           </motion.div>
         </AnimatePresence>
