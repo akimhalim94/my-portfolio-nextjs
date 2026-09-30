@@ -98,7 +98,11 @@ export default async function ProjectsPage() {
                             as="span"
                             variant="scale"
                             delay={0.25}
-                            className="absolute bottom-3 left-3 text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800"
+                            /* `type` is free text, so the pill is capped to the
+                               cover minus its own insets and ellipsised. Left
+                               unconstrained it wraps to several lines and the
+                               rounded-full stretches into a lozenge. */
+                            className="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] truncate text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800"
                           >
                             {project.type}
                           </RevealItem>
@@ -116,7 +120,7 @@ export default async function ProjectsPage() {
                         <RevealItem
                           as="span"
                           variant="scale"
-                          className="inline-block mb-2 text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800"
+                          className="inline-block max-w-full mb-2 truncate text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800"
                         >
                           {project.type}
                         </RevealItem>

@@ -93,7 +93,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     as="span"
                     variant="scale"
                     delay={0.3}
-                    className="absolute bottom-3 left-3 text-[10px] font-semibold px-2.5 py-1 bg-blue-950/90 text-blue-300 rounded-full border border-blue-800"
+                    /* `type` is free text: cap the pill to the cover minus its
+                       insets and ellipsise, or a long value wraps and turns the
+                       rounded-full into a lozenge. */
+                    className="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] truncate text-[10px] font-semibold px-2.5 py-1 bg-blue-950/90 text-blue-300 rounded-full border border-blue-800"
                   >
                     {project.type}
                   </RevealItem>
@@ -108,7 +111,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               >
                 <RevealItem variant="down" className="flex items-center gap-3">
                   {!cover && (
-                    <span className="text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800">
+                    <span className="inline-block max-w-full text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800 truncate">
                       {project.type}
                     </span>
                   )}
@@ -352,7 +355,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                                 as="span"
                                 variant="scale"
                                 delay={0.2}
-                                className="absolute bottom-2.5 left-2.5 text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800"
+                                className="absolute bottom-2.5 left-2.5 max-w-[calc(100%-1.25rem)] truncate text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800"
                               >
                                 {other.type}
                               </RevealItem>
@@ -368,7 +371,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                             <RevealItem
                               as="span"
                               variant="scale"
-                              className="inline-block text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800"
+                              className="inline-block max-w-full text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 truncate"
                             >
                               {other.type}
                             </RevealItem>
