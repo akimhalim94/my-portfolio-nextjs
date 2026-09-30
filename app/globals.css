@@ -179,3 +179,136 @@ html.vt-back::view-transition-new(root) {
     animation-delay: 0s !important;
   }
 }
+
+/* ============ Ambient scroll-scene animations ============
+   These are the loops that keep running while the page sits still. Anything
+   that reacts to scroll position is done in JS with motion values instead
+   (see components/motion), because a scroll-linked value has to be readable
+   mid-frame — a CSS animation cannot follow the scrollbar in both
+   directions. These only decorate. */
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+  33% {
+    translate: 3% -5%;
+    scale: 1.06;
+  }
+  66% {
+    translate: -4% 4%;
+    scale: 0.95;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes sheen-sweep {
+  0% {
+    transform: translateX(-130%);
+  }
+  55%,
+  100% {
+    transform: translateX(260%);
+  }
+}
+
+/* Conic-gradient border. The gradient lives on ::before and is masked down to
+   a 1px ring; the card itself must be `relative` and clip its overflow. */
+.gradient-ring {
+  position: relative;
+  isolation: isolate;
+}
+.gradient-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    #38bdf8,
+    #a855f7,
+    #22d3ee,
+    #6366f1,
+    #38bdf8
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: spin-slow 9s linear infinite;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Slow light sweep travelling across a surface. */
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgb(255 255 255 / 0.08),
+    transparent
+  );
+  transform: translateX(-130%);
+  animation: sheen-sweep 6.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.drift {
+  animation: drift 18s ease-in-out infinite;
+}
+.drift-slow {
+  animation: drift 26s ease-in-out infinite reverse;
+}
+
+.pulse-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: pulse-ring 2.6s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-ring::before,
+  .sheen::after,
+  .drift,
+  .drift-slow,
+  .pulse-ring::before {
+    animation: none !important;
+  }
+  .sheen::after,
+  .pulse-ring::before {
+    display: none !important;
+  }
+}
