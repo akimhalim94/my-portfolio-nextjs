@@ -63,7 +63,6 @@ components/
 ├── Navbar.tsx           # Fixed glassy navbar for the public site
 ├── ViewTransitions.tsx  # Page transition engine (View Transitions API wrapper around Next.js navigation)
 ├── LinkPendingHint.tsx  # Inline pending state for a slow <Link> navigation (must be rendered inside a Link)
-├── CanvasCursor.tsx     # Custom canvas cursor overlay
 ├── Scroll3DBackground.tsx  # Scroll-driven WebGL 3D scene (React Three Fiber)
 ├── ScrollToTopButton.tsx   # Floating scroll-to-top button
 ├── FloatingChatButton.tsx  # Floating AI chat bubble (useChat + quick questions)

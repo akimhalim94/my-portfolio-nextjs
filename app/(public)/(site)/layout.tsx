@@ -1,4 +1,3 @@
-import CanvasCursor from "@/components/CanvasCursor";
 import Scroll3DBackground from "@/components/Scroll3DBackground";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
@@ -10,7 +9,6 @@ export default function SiteLayout({
   return (
     <>
       <Scroll3DBackground />
-      <CanvasCursor />
       <div className="relative z-0">{children}</div>
       <ScrollToTopButton />
     </>
