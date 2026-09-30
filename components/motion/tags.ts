@@ -20,6 +20,9 @@ export type ElementTag =
   | "h1"
   | "h2"
   | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
   | "li"
   | "ul"
   | "ol"
@@ -46,6 +49,9 @@ export const MOTION_TAGS = {
   h1: motion.h1,
   h2: motion.h2,
   h3: motion.h3,
+  h4: motion.h4,
+  h5: motion.h5,
+  h6: motion.h6,
   li: motion.li,
   ul: motion.ul,
   ol: motion.ol,

@@ -1,4 +1,5 @@
 import { getHero, getJourneys } from "@/app/db-controller/content-actions";
+import Ambient from "@/components/motion/Ambient";
 import Parallax from "@/components/motion/Parallax";
 import Reveal, {
   RevealGroup,
@@ -38,20 +39,9 @@ export default async function Home() {
 
   return (
     <main className="relative min-h-screen text-white px-6 sm:px-8 pt-28 pb-24 flex flex-col items-center">
-      {/* Ambient light field. Sits behind everything, drifts on its own clock
-          and additionally slides at a different rate than the page, so the
-          hero reads as a lit space rather than a flat card on a flat page. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <Parallax y={[-90, 90]} blur={[10, 0]} className="absolute inset-x-0 top-0 h-[34rem]">
-          <div className="drift mx-auto h-full w-[34rem] max-w-[80vw] rounded-full bg-blue-600/20 blur-[110px]" />
-        </Parallax>
-        <Parallax y={[70, -70]} className="absolute -left-24 top-[42rem] h-[26rem] w-[26rem]">
-          <div className="drift-slow h-full w-full rounded-full bg-purple-600/20 blur-[110px]" />
-        </Parallax>
-        <Parallax y={[-60, 60]} className="absolute -right-32 top-[78rem] h-[24rem] w-[24rem]">
-          <div className="drift h-full w-full rounded-full bg-cyan-500/15 blur-[110px]" />
-        </Parallax>
-      </div>
+      {/* Ambient light field: sits behind everything, drifts on its own clock
+          and slides at a different rate than the page. */}
+      <Ambient />
 
       {/* Hero Section */}
       <Reveal variant="fade" amount={0.15} className="w-full max-w-5xl">

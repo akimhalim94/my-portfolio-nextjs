@@ -4,6 +4,10 @@ import {
   getSocialLinks,
   getContentSettings,
 } from "@/app/db-controller/content-actions";
+import Ambient from "@/components/motion/Ambient";
+import Parallax from "@/components/motion/Parallax";
+import Reveal, { RevealGroup, RevealItem } from "@/components/motion/Reveal";
+import SplitText from "@/components/motion/SplitText";
 
 export default async function ContactPage() {
   const [socialLinks, settings] = await Promise.all([
@@ -12,40 +16,82 @@ export default async function ContactPage() {
   ]);
 
   return (
-    <main className="min-h-screen text-white pt-28 p-8 flex flex-col items-center">
+    <main className="relative min-h-screen text-white pt-28 p-8 flex flex-col items-center">
+      <Ambient />
+
       <div className="w-full max-w-2xl space-y-6">
-        <div className="rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-8 shadow-2xl">
-          <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
-            📬 Get in Touch
-          </h1>
-          <p className="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed">
-            {settings.contact_intro}
-          </p>
-
-          <ContactForm />
-        </div>
-
-        <div className="rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 shadow-2xl">
-          <h2 className="text-lg font-semibold mb-4 text-white">
-            Or find me here
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            {socialLinks.map((social, index) => (
-              <a
-                key={index}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all flex items-center justify-between text-xs font-medium text-gray-300"
+        <Reveal
+          variant="tilt"
+          amount={0.1}
+          className="relative rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-8 shadow-2xl overflow-hidden"
+        >
+          {/* Card leans slightly as it arrives, then drifts against the page. */}
+          <Parallax y={[-18, 18]} rotate={[-0.8, 0.8]} className="relative">
+            <RevealGroup stagger={0.1} delayChildren={0.15}>
+              <SplitText
+                text="📬 Get in Touch"
+                className="text-2xl font-bold mb-2"
+              />
+              <RevealItem
+                as="p"
+                variant="blur"
+                className="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed"
               >
-                <span>{social.name}</span>
-                <span className="text-blue-400">&rarr;</span>
-              </a>
-            ))}
-          </div>
-        </div>
+                {settings.contact_intro}
+              </RevealItem>
+            </RevealGroup>
 
-        <div className="mt-8">
+            <ContactForm />
+          </Parallax>
+        </Reveal>
+
+        <Reveal
+          variant="clip"
+          amount={0.15}
+          className="relative rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 shadow-2xl"
+        >
+          <Parallax y={[16, -16]} className="relative">
+            <Reveal
+              as="h2"
+              variant="left"
+              amount={0.5}
+              className="text-lg font-semibold mb-4 text-white"
+            >
+              Or find me here
+            </Reveal>
+            <RevealGroup
+              stagger={0.07}
+              delayChildren={0.15}
+              className="grid grid-cols-2 gap-4"
+            >
+              {socialLinks.map((social, index) => (
+                /* The animated wrapper *is* the grid cell: a `display: contents`
+                   wrapper would leave the anchor as the cell but give it no box
+                   to transform, so the reveal would run invisibly. */
+                <RevealItem
+                  key={index}
+                  variant="scale"
+                  whileHover={{ y: -4 }}
+                  className="group/link rounded-xl bg-white/5 border border-white/10 transition-colors hover:border-blue-500/50 hover:bg-white/10"
+                >
+                  <a
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full h-full p-3 flex items-center justify-between text-xs font-medium text-gray-300"
+                  >
+                    <span>{social.name}</span>
+                    <span className="text-blue-400 transition-transform group-hover/link:translate-x-1">
+                      &rarr;
+                    </span>
+                  </a>
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          </Parallax>
+        </Reveal>
+
+        <Reveal variant="fade" amount={0.5} className="mt-8">
           <Link
             href="/"
             data-view-transition="back"
@@ -53,7 +99,7 @@ export default async function ContactPage() {
           >
             &larr; Return to Homepage
           </Link>
-        </div>
+        </Reveal>
       </div>
     </main>
   );
