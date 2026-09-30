@@ -16,7 +16,7 @@ export default async function ContactPage() {
   ]);
 
   return (
-    <main className="relative min-h-screen text-white pt-28 p-8 flex flex-col items-center">
+    <main className="relative min-h-screen text-white pt-28 p-8 pb-20 flex flex-col items-center">
       <Ambient />
 
       <div className="w-full max-w-2xl space-y-6">
@@ -51,14 +51,13 @@ export default async function ContactPage() {
           className="relative rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 shadow-2xl"
         >
           <Parallax y={[16, -16]} className="relative">
-            <Reveal
+            <RevealItem
               as="h2"
               variant="left"
-              amount={0.5}
               className="text-lg font-semibold mb-4 text-white"
             >
               Or find me here
-            </Reveal>
+            </RevealItem>
             <RevealGroup
               stagger={0.07}
               delayChildren={0.15}
@@ -91,7 +90,9 @@ export default async function ContactPage() {
           </Parallax>
         </Reveal>
 
-        <Reveal variant="fade" amount={0.5} className="mt-8">
+        {/* The last thing on the page can never scroll far enough to satisfy a
+            high threshold, so this one asks for a sliver instead of half. */}
+        <Reveal variant="fade" amount={0.2} className="mt-8">
           <Link
             href="/"
             data-view-transition="back"

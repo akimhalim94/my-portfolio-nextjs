@@ -29,7 +29,7 @@ export default async function ProjectsPage() {
   );
 
   return (
-    <main className="relative min-h-screen text-white pt-28 p-8 flex flex-col items-center">
+    <main className="relative min-h-screen text-white pt-28 p-8 pb-20 flex flex-col items-center">
       <Ambient />
 
       <div className="w-full max-w-5xl">
@@ -210,7 +210,9 @@ export default async function ProjectsPage() {
         </RevealGroup>
 
         {/* Butang Kembali */}
-        <Reveal variant="fade" amount={0.5} className="mt-8">
+        {/* The last thing on the page can never scroll far enough to satisfy a
+            high threshold, so this one asks for a sliver instead of half. */}
+        <Reveal variant="fade" amount={0.2} className="mt-8">
           <Link
             href="/"
             data-view-transition="back"

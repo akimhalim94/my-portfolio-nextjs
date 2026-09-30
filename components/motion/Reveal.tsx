@@ -84,6 +84,45 @@ const SHOWN: Record<RevealVariant, object> = {
 
 const REDUCED_TRANSITION = { duration: 0.2, ease: "linear" } as const;
 
+const VIEWPORT_MARGIN = "0px 0px -8% 0px";
+
+/**
+ * `clip` cannot drive the element it is applied to.
+ *
+ * Chrome's IntersectionObserver folds an element's *own* `clip-path` into the
+ * rect it reports, so a hidden state of `inset(0 0 100% 0)` reports an
+ * intersection ratio of 0 — the observer never sees the element, so
+ * `whileInView` never fires and the element stays clipped away forever. A
+ * 50% clip likewise reports 0.5, so no `amount` threshold can rescue it.
+ *
+ * The fix is to split the job in two: the outer element owns the trigger (it
+ * keeps its full, unclipped box, so the observer can see it) and an inner
+ * element carries the clip. The inner has `variants` but no `initial`/`animate`,
+ * so it inherits the "hidden"/"show" labels from the outer exactly like a
+ * `RevealItem` inherits from its group.
+ *
+ * The same masking cuts both ways: while the clip is closed the inner element
+ * reports an empty intersection rect, so a *nested* self-triggering `Reveal`
+ * inside a `clip` panel can never see itself, and Chrome does not re-fire its
+ * observer when the ancestor's clip later opens. Put `RevealItem`s inside a
+ * `clip` panel instead — they inherit the label and need no observer.
+ */
+const CLIP_TRIGGER: Variants = { hidden: {}, show: {} };
+
+function buildClipVariants(delay: number, duration?: number): Variants {
+  return {
+    hidden: { y: 44, clipPath: "inset(0 0 100% 0)" },
+    show: {
+      y: 0,
+      clipPath: "inset(0 0 0% 0)",
+      transition:
+        duration === undefined
+          ? { duration: 0.85, ease: EASE, delay }
+          : { duration, ease: EASE, delay },
+    },
+  } as Variants;
+}
+
 function buildVariants(
   variant: RevealVariant,
   reduced: boolean,
@@ -149,16 +188,40 @@ export function Reveal({
 }: RevealProps) {
   const reduced = !!useReducedMotion();
   const Tag = MOTION_TAGS[as];
+  const viewport = { once: !repeat, amount, margin: VIEWPORT_MARGIN };
+
+  // Both are built unconditionally: branching between them would change the
+  // hook count if `variant` ever flipped between renders.
   const variants = useMemo(
     () => buildVariants(variant, reduced, delay, duration),
     [variant, reduced, delay, duration],
   );
+  const clipVariants = useMemo(
+    () => buildClipVariants(delay, duration),
+    [delay, duration],
+  );
+
+  // Reduced motion has no clip to deadlock, so it keeps the single-element
+  // path and crossfades like every other variant.
+  if (variant === "clip" && !reduced) {
+    return (
+      <Tag
+        initial="hidden"
+        whileInView="show"
+        viewport={viewport}
+        variants={CLIP_TRIGGER}
+        {...rest}
+      >
+        <Tag variants={clipVariants}>{children}</Tag>
+      </Tag>
+    );
+  }
 
   return (
     <Tag
       initial="hidden"
       whileInView="show"
-      viewport={{ once: !repeat, amount, margin: "0px 0px -8% 0px" }}
+      viewport={viewport}
       variants={variants}
       {...rest}
     >
