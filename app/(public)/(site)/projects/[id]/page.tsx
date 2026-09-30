@@ -63,6 +63,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <Ambient />
 
       <div className="w-full max-w-3xl space-y-8">
+        {/* ================= GALERI GAMBAR ================= */}
+        {gallery.length > 0 && (
+          <Reveal
+            variant="up"
+            amount={0.1}
+            className="rounded-2xl border border-white/10 bg-gray-950/40 p-3"
+          >
+            <ProjectGallery images={gallery} title={project.title} />
+          </Reveal>
+        )}
+
         {/* ================= HEADER KANDUNGAN UTAMA ================= */}
         <Reveal
           variant="tilt"
@@ -71,39 +82,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         >
           {/* The panel leans in, then drifts against the page as it passes. */}
           <Parallax y={[-16, 16]} rotate={[-0.7, 0.7]} className="relative">
-            {cover && (
-              /* The cover unrolls open and keeps drifting, so the detail view
-                 opens on the picture rather than on a wall of text. */
-              <Reveal variant="clip" duration={0.9} amount={0.15}>
-                <Parallax
-                  y={[20, -20]}
-                  scale={[1, 1.07]}
-                  className="relative -mx-8 -mt-8 mb-6 aspect-video overflow-hidden rounded-t-2xl bg-gray-950"
-                >
-                  <Image
-                    src={cover}
-                    alt={`${project.title} cover`}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 768px"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-950/10 to-transparent" />
-                  <RevealItem
-                    as="span"
-                    variant="scale"
-                    delay={0.3}
-                    /* `type` is free text: cap the pill to the cover minus its
-                       insets and ellipsise, or a long value wraps and turns the
-                       rounded-full into a lozenge. */
-                    className="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] truncate text-[10px] font-semibold px-2.5 py-1 bg-blue-950/90 text-blue-300 rounded-full border border-blue-800"
-                  >
-                    {project.type}
-                  </RevealItem>
-                </Parallax>
-              </Reveal>
-            )}
-
             <RevealGroup stagger={0.1} delayChildren={cover ? 0.25 : 0.05}>
               <RevealGroup
                 stagger={0.09}
@@ -141,7 +119,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </RevealGroup>
 
             {/* Stacks & Features */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 pb-2">
               <RevealGroup stagger={0.06} delayChildren={0.2} amount={0.3}>
                 <RevealItem
                   as="h2"
@@ -150,10 +128,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 >
                   Built With
                 </RevealItem>
-                <RevealGroup
-                  stagger={0.04}
-                  className="flex flex-wrap gap-1.5"
-                >
+                <RevealGroup stagger={0.04} className="flex flex-wrap gap-1.5">
                   {project.stacks.map((stack, idx) => (
                     <RevealItem
                       key={idx}
@@ -176,10 +151,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 >
                   Key Features
                 </RevealItem>
-                <RevealGroup
-                  stagger={0.04}
-                  className="flex flex-wrap gap-1.5"
-                >
+                <RevealGroup stagger={0.04} className="flex flex-wrap gap-1.5">
                   {project.features.map((feat, idx) => (
                     <RevealItem
                       key={idx}
@@ -202,10 +174,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 amount={0.4}
                 className="pt-6 border-t border-white/10"
               >
-                <RevealItem
-                  whileHover={{ x: 4 }}
-                  className="inline-block"
-                >
+                <RevealItem whileHover={{ x: 4 }} className="inline-block">
                   <a
                     href={project.url}
                     target="_blank"
@@ -220,17 +189,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             )}
           </Parallax>
         </Reveal>
-
-        {/* ================= GALERI GAMBAR ================= */}
-        {gallery.length > 0 && (
-          <Reveal
-            variant="up"
-            amount={0.1}
-            className="rounded-2xl border border-white/10 bg-gray-950/40 p-3"
-          >
-            <ProjectGallery images={gallery} title={project.title} />
-          </Reveal>
-        )}
 
         {/* ================= PENERANGAN TERPERINCI (WHAT'S INSIDE, HOW, WHY) ================= */}
         <div className="grid grid-cols-1 gap-6">
@@ -324,11 +282,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 const otherCover = imageMap.get(other.id)?.[0];
 
                 return (
-                  <RevealItem
-                    key={other.id}
-                    variant="up"
-                    className="h-full"
-                  >
+                  <RevealItem key={other.id} variant="up" className="h-full">
                     <Link
                       href={`/projects/${other.id}`}
                       prefetch

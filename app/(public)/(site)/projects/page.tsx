@@ -102,7 +102,7 @@ export default async function ProjectsPage() {
                                cover minus its own insets and ellipsised. Left
                                unconstrained it wraps to several lines and the
                                rounded-full stretches into a lozenge. */
-                            className="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] truncate text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800"
+                            className="absolute bottom-3 left-10 max-w-[calc(100%-1.5rem)] truncate text-[10px] font-semibold px-2.5 py-1 bg-blue-950 text-blue-300 rounded-full border border-blue-800"
                           >
                             {project.type}
                           </RevealItem>

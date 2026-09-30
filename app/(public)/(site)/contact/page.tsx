@@ -46,7 +46,7 @@ export default async function ContactPage() {
         </Reveal>
 
         <Reveal
-          variant="clip"
+          variant="up"
           amount={0.15}
           className="relative rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-6 shadow-2xl"
         >
