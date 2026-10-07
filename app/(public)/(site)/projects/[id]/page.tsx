@@ -80,8 +80,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           amount={0.1}
           className="relative rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-8 shadow-2xl overflow-hidden"
         >
-          {/* The panel leans in, then drifts against the page as it passes. */}
-          <Parallax y={[-16, 16]} rotate={[-0.7, 0.7]} className="relative">
+          {/* The panel drifts against the page as it passes. */}
+          <Parallax y={[-16, 16]} className="relative">
             <RevealGroup stagger={0.1} delayChildren={cover ? 0.25 : 0.05}>
               <RevealGroup
                 stagger={0.09}

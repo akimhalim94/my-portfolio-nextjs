@@ -43,7 +43,6 @@ type ParallaxProps = {
   /** Horizontal travel in px. A single number means [-n, n]. */
   x?: Range;
   scale?: Range;
-  rotate?: Range;
   /** Gaussian blur in px, driven by scroll progress. */
   blur?: Range;
   opacity?: Range;
@@ -61,7 +60,6 @@ export default function Parallax({
   y,
   x,
   scale,
-  rotate,
   blur,
   opacity,
   offset = ["start end", "end start"],
@@ -81,14 +79,12 @@ export default function Parallax({
   const yRange = toRange(y, [0, 0]);
   const xRange = toRange(x, [0, 0]);
   const scaleRange = toRange(scale, [1, 1]);
-  const rotateRange = toRange(rotate, [0, 0]);
   const blurRange = toRange(blur, [0, 0]);
   const opacityRange = toRange(opacity, [1, 1]);
 
   const motionY = useTransform(progress, [0, 1], yRange);
   const motionX = useTransform(progress, [0, 1], xRange);
   const motionScale = useTransform(progress, [0, 1], scaleRange);
-  const motionRotate = useTransform(progress, [0, 1], rotateRange);
   const motionOpacity = useTransform(progress, [0, 1], opacityRange);
   const motionBlur = useTransform(progress, [0, 1], blurRange);
   const motionFilter = useMotionTemplate`blur(${motionBlur}px)`;
@@ -102,7 +98,6 @@ export default function Parallax({
         y: reduced ? 0 : motionY,
         x: reduced ? 0 : motionX,
         scale: reduced ? 1 : motionScale,
-        rotate: reduced ? 0 : motionRotate,
         opacity: reduced ? 1 : motionOpacity,
         filter: reduced ? undefined : motionFilter,
       }}

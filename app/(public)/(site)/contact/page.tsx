@@ -25,8 +25,8 @@ export default async function ContactPage() {
           amount={0.1}
           className="relative rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-8 shadow-2xl overflow-hidden"
         >
-          {/* Card leans slightly as it arrives, then drifts against the page. */}
-          <Parallax y={[-18, 18]} rotate={[-0.8, 0.8]} className="relative">
+          {/* Card drifts against the page. */}
+          <Parallax y={[-18, 18]} className="relative">
             <RevealGroup stagger={0.1} delayChildren={0.15}>
               <SplitText
                 text="📬 Get in Touch"

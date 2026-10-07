@@ -46,7 +46,7 @@ export default async function Home() {
       {/* Hero Section */}
       <Reveal variant="fade" amount={0.15} className="w-full max-w-5xl">
         {/* Card drifts slower than the scroll so it separates from the page. */}
-        <Parallax y={[-46, 46]} rotate={[-1.2, 1.2]} className="perspective-[1400px]">
+        <Parallax y={[-46, 46]} className="perspective-[1400px]">
           <section
             id="aboutme"
             className="gradient-ring sheen relative overflow-hidden rounded-2xl bg-gray-950/70 p-8 backdrop-blur-md shadow-xl sm:p-12"
@@ -147,11 +147,10 @@ export default async function Home() {
 
                 {/* CARD */}
                 <Reveal variant={entrance} amount={0.25}>
-                  {/* Counter-drift against the page, plus a slight tilt as it
-                      passes, so each card has its own motion. */}
+                  {/* Counter-drift against the page, so each card has its
+                      own motion. */}
                   <Parallax
                     y={[22, -22]}
-                    rotate={[index % 2 === 0 ? -0.7 : 0.7, index % 2 === 0 ? 0.7 : -0.7]}
                     className="perspective-[1200px]"
                   >
                     <article className="group/card relative overflow-hidden rounded-xl bg-gray-900/70 p-5 border border-gray-800 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gray-700 hover:shadow-[0_18px_50px_-24px_rgba(56,189,248,0.7)]">

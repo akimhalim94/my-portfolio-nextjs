@@ -14,7 +14,7 @@ export default function LoginPage() {
         amount={0.2}
         className="w-full max-w-md perspective-[1200px]"
       >
-        <Parallax y={[-24, 24]} rotate={[-1, 1]} className="perspective-[1200px]">
+        <Parallax y={[-24, 24]} className="perspective-[1200px]">
           <div className="gradient-ring sheen relative overflow-hidden rounded-2xl bg-gray-950/80 border border-white/10 backdrop-blur-md p-8 shadow-2xl">
             <RevealGroup stagger={0.12} delayChildren={0.2}>
               <SplitText
