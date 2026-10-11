@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 // The browser blocks painting for the entire duration of a view transition, so
 // this is a backstop against freezing the page indefinitely, not the normal
 // path. With prefetched routes the pathname updates within a frame or two.
-const SAFETY_TIMEOUT = 500;
+const SAFETY_TIMEOUT = 300;
 
 function clearDirection() {
   document.documentElement.classList.remove("vt-forward", "vt-back");
